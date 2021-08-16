@@ -1,0 +1,6 @@
+Implementación de passport.js
+instalamos
+npm i passport jsonwebtoken passport-http passport-jwt
+
+utilizamos esta pagina para generar nuestro secret
+https://keygen.io/

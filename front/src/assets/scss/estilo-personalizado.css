@@ -1,0 +1,7 @@
+.table td, .table th {
+    padding: 0.5rem 0.75rem !important;
+}
+
+.table th{
+    width: 100px !important;
+}
