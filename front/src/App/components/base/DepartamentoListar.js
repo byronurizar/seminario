@@ -11,17 +11,17 @@ import { limpiarEstiloTabla, asignarEstiloTabla } from '../../../helpers/estiloT
 import { NoAutorizado } from './NoAutorizado';
 import Loading from './Loading';
 const menuId = 9;
-const menuIdPais = 8;
+const menuIdRegion = 8;
 export const DepartamentoListar = () => {
     const state = useSelector(state => state);
     const [loading, setLoading] = useState(true)
     const [accesos, setAccesos] = useState([]);
     const [abrirModal, setAbrirModal] = useState(false);
-    const [catPaises, setCatPais] = useState([]);
+    const [catRegiones, setRegiones] = useState([]);
     const [departamentos, setDepartamentos] = useState([]);
     const initData = {
         departamentoId: '',
-        paisId: '',
+        regionId: '',
         descripcion: '',
         estadoId: 1
     };
@@ -29,7 +29,7 @@ export const DepartamentoListar = () => {
     const GetAccesosByMenuId = () => {
         if (state?.accesos) {
             const { accesos } = state;
-            const misAccesos = accesos.filter(item => (item.menuId === menuId || item.menuId === menuIdPais));
+            const misAccesos = accesos.filter(item => (item.menuId === menuId || item.menuId === menuIdRegion));
             setAccesos(misAccesos);
         }
         setLoading(false);
@@ -40,14 +40,14 @@ export const DepartamentoListar = () => {
         setAbrirModal(true);
         setdataInicial(initData);
     }
-    const GetPaises = async () => {
-        if (accesos.find(acceso => acceso.menuId === menuIdPais && acceso.accesoId === 3)) {
-            let response = await callApi('pais?include=0?estadoId=1');
+    const GetRegiones = async () => {
+        if (accesos.find(acceso => acceso.menuId === menuIdRegion && acceso.accesoId === 3)) {
+            let response = await callApi('region?include=0?estadoId=1');
             if (response) {
-                setCatPais(response);
+                setRegiones(response);
             }
         } else {
-            setCatPais([{ paisId: '', descripcion: 'No esta autorizado' }]);
+            setRegiones([{ regionId: '', descripcion: 'No esta autorizado' }]);
         }
     }
     const GetDepartamentos = async () => {
@@ -63,10 +63,10 @@ export const DepartamentoListar = () => {
         }
     }
     const handleEditar = (id) => {
-        const { departamentoId, paisId, descripcion, estadoId } = departamentos.find(item => item.departamentoId === id);
+        const { departamentoId, regionId, descripcion, estadoId } = departamentos.find(item => item.departamentoId === id);
         setdataInicial({
             departamentoId,
-            paisId,
+            regionId,
             descripcion,
             estadoId
         });
@@ -103,7 +103,7 @@ export const DepartamentoListar = () => {
 
     useEffect(() => {
         GetDepartamentos();
-        GetPaises();
+        GetRegiones();
     }, [accesos]);
 
     return (
@@ -137,7 +137,7 @@ export const DepartamentoListar = () => {
                                                         <tr>
                                                             <th>Codigo</th>
                                                             <th>Departamento</th>
-                                                            <th>Pais</th>
+                                                            <th>Región</th>
                                                             <th>Estado</th>
                                                             {
                                                                 accesos.find(acceso => (acceso.menuId === menuId && acceso.accesoId === 2) || (acceso.menuId === menuId && acceso.accesoId === 4)) &&
@@ -147,11 +147,11 @@ export const DepartamentoListar = () => {
                                                     </thead>
                                                     <tbody>
                                                         {
-                                                            departamentos.map(({ departamentoId, descripcion, Pais: { descripcion: pais }, Estado: { descripcion: estado } }) => (
+                                                            departamentos.map(({ departamentoId, descripcion, Region: { descripcion: region }, Estado: { descripcion: estado } }) => (
                                                                 <tr key={departamentoId}>
                                                                     <td>{departamentoId}</td>
                                                                     <td>{descripcion}</td>
-                                                                    <td>{pais}</td>
+                                                                    <td>{region}</td>
                                                                     <td>{estado}</td>
                                                                     {
                                                                         accesos.find(acceso => (acceso.menuId === menuId && acceso.accesoId === 2) || (acceso.menuId === menuId && acceso.accesoId === 4)) &&
@@ -177,7 +177,7 @@ export const DepartamentoListar = () => {
                             }
                             {
                                 abrirModal === true &&
-                                <DepartamentoUpSert abrirModal={abrirModal} setAbrirModal={setAbrirModal} catPaises={catPaises} GetDepartamentos={GetDepartamentos} dataInicial={dataInicial} />
+                                <DepartamentoUpSert abrirModal={abrirModal} setAbrirModal={setAbrirModal} catRegiones={catRegiones} GetDepartamentos={GetDepartamentos} dataInicial={dataInicial} />
                             }
 
                         </Card.Body>

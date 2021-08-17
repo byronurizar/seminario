@@ -27,7 +27,7 @@ const TipoSangreModel = require('./models/cat_tipo_sangre');
 const EstadoCivilModel = require('./models/cat_estado_civil');
 const TipoDocumentoModel = require('./models/cat_tipo_documento');
 const TipoTelefonoModel = require('./models/cat_tipo_telefono');
-const PaisModel = require('./models/cat_pais');
+const RegionModel = require('./models/cat_region');
 const DepartamentoModel = require('./models/cat_departamento');
 const MunicipioModel = require('./models/cat_municipio');
 const AccesoModel = require('./models/cat_acceso');
@@ -47,6 +47,8 @@ const FotoUsuarioModel = require('./models/foto_usuario');
 const TelefonoPersonaModel = require('./models/telefono_persona');
 const ResetPassWordModel = require('./models/reset_password');
 const ParametroModel = require('./models/cat_parametro');
+const SedeDiacoModel = require('./models/cat_sede_diaco');
+
 
 
 const Estado = EstadoModel(confiBd, Sequelize);
@@ -55,7 +57,7 @@ const TipoSangre = TipoSangreModel(confiBd, Sequelize);
 const EstadoCivil = EstadoCivilModel(confiBd, Sequelize);
 const TipoDocumento = TipoDocumentoModel(confiBd, Sequelize);
 const TipoTelefono = TipoTelefonoModel(confiBd, Sequelize);
-const Pais = PaisModel(confiBd, Sequelize);
+const Region = RegionModel(confiBd, Sequelize);
 const Departamento = DepartamentoModel(confiBd, Sequelize);
 const Municipio = MunicipioModel(confiBd, Sequelize);
 const Acceso = AccesoModel(confiBd, Sequelize);
@@ -75,14 +77,14 @@ const FotoUsuario = FotoUsuarioModel(confiBd, Sequelize);
 const TelefonoPersona = TelefonoPersonaModel(confiBd, Sequelize);
 const ResetPassWord = ResetPassWordModel(confiBd, Sequelize);
 const Parametro = ParametroModel(confiBd, Sequelize);
-
+const SedeDiaco=SedeDiacoModel(confiBd,Sequelize);
 EstadoCivil.belongsTo(Estado,{
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-Pais.belongsTo(Estado,{
+Region.belongsTo(Estado,{
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
@@ -94,9 +96,9 @@ Departamento.belongsTo(Estado,{
   onDelete: "CASCADE",
 });
 
-Departamento.belongsTo(Pais,{
-  as: "Pais",
-  foreignKey: "paisId",
+Departamento.belongsTo(Region,{
+  as: "Region",
+  foreignKey: "regionId",
   onDelete: "CASCADE",
 });
 
@@ -310,6 +312,18 @@ Menu.belongsTo(Menu,{
   onDelete: "CASCADE",
 });
 
+SedeDiaco.belongsTo(Estado,{
+  as: "Estado",
+  foreignKey: "estadoId",
+  onDelete: "CASCADE",
+});
+
+SedeDiaco.belongsTo(Municipio,{
+  as: "Municipio",
+  foreignKey: "municipioId",
+  onDelete: "CASCADE",
+});
+
 BitacoraCambios.belongsTo(Usuario,{
   as: "Usuario",
   foreignKey: "usuario_crea",
@@ -326,7 +340,9 @@ try {
   confiBd.sync({
     force: false,
   }).then(() => {
-    const { Estados, Generos, Personas, Usuarios, Paises, Departamentos, Municipios, Menus, Accesos, MenuAccesos, TiposDocumentos, Roles, MenuAccesosRol, TiposTelefonos, EstadosCiviles, TiposSangre, UsuarioRoles, Parametros } = require('./data');
+    const { Estados, Generos, Personas, Usuarios,Regiones, Departamentos, Municipios, Menus, Accesos, 
+          MenuAccesos, TiposDocumentos, Roles, MenuAccesosRol, TiposTelefonos, EstadosCiviles, TiposSangre, 
+          UsuarioRoles, Parametros,listSedesDiaco } = require('./data');
     confiBd.query("select count(*) as total from cat_estado", {
       type: QueryTypes.SELECT
     }).then(async (resultado) => {
@@ -335,7 +351,7 @@ try {
         await Genero.bulkCreate(Generos);
         await Persona.bulkCreate(Personas);
         await Usuario.bulkCreate(Usuarios);
-        await Pais.bulkCreate(Paises);
+        await Region.bulkCreate(Regiones);
         await Departamento.bulkCreate(Departamentos);
         await Municipio.bulkCreate(Municipios);
         await Menu.bulkCreate(Menus);
@@ -349,6 +365,7 @@ try {
         await TipoSangre.bulkCreate(TiposSangre);
         await UsuarioRol.bulkCreate(UsuarioRoles);
         await Parametro.bulkCreate(Parametros);
+        await SedeDiaco.bulkCreate(listSedesDiaco);
       }
     });
   });
@@ -363,7 +380,7 @@ module.exports = {
   EstadoCivil,
   TipoDocumento,
   TipoTelefono,
-  Pais,
+  Region,
   Departamento,
   Municipio,
   Acceso,
@@ -383,6 +400,7 @@ module.exports = {
   TelefonoPersona,
   ResetPassWord,
   Parametro,
+  SedeDiaco,
   bd: confiBd
 }
 

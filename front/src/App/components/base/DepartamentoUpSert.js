@@ -5,7 +5,7 @@ import callApi from '../../../helpers/conectorApi';
 import { alert_exitoso, alert_warning } from '../../../helpers/Notificacion';
 import { useForm } from '../../hooks/useForm';
 import Loading from './Loading';
-export const DepartamentoUpSert = ({ dataInicial, abrirModal, setAbrirModal, catPaises, GetDepartamentos }) => {
+export const DepartamentoUpSert = ({ dataInicial, abrirModal, setAbrirModal, catRegiones, GetDepartamentos }) => {
     const [values, handleOnChange] = useForm(dataInicial);
     const [loading, setLoading] = useState(false)
     const NuevoRegistro = async () => {
@@ -77,18 +77,18 @@ export const DepartamentoUpSert = ({ dataInicial, abrirModal, setAbrirModal, cat
                                     </Form.Group>
 
                                     <Form.Group as={Col} md="12">
-                                        <Form.Label htmlFor="paisId">Pais</Form.Label>
+                                        <Form.Label htmlFor="regionId">Region</Form.Label>
                                         <SelectGroup
-                                            name="paisId"
-                                            id="paisId"
+                                            name="regionId"
+                                            id="regionId"
                                             required
-                                            value={values.paisId}
+                                            value={values.regionId}
                                             onChange={handleOnChange}
                                             errorMessage={errorMessage}>
-                                            <option value="">Seleccione un tipo pais</option>
+                                            <option value="">Seleccione una Región</option>
                                             {
-                                                catPaises.map(({ paisId, descripcion }) => (
-                                                    <option value={paisId} key={paisId}>{descripcion}</option>
+                                                catRegiones.map(({ regionId, descripcion }) => (
+                                                    <option value={regionId} key={regionId}>{descripcion}</option>
                                                 )
                                                 )
                                             }

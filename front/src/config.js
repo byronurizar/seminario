@@ -10,6 +10,6 @@ export default {
     navFixedLayout: true,
     headerFixedLayout: false,
     boxLayout: false,
-    urlApi: 'http://127.0.0.1:3000/api/',//urlApi:"http://apibase.misapps.tk/api/",
+    urlApi: 'http://127.0.0.1:3100/api/',//urlApi:"http://apibase.misapps.tk/api/",
     dias_alerta_cambio_pass: 10,
 };

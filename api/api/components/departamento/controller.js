@@ -1,4 +1,4 @@
-const { Departamento, Estado, Pais } = require('../../../store/db');
+const { Departamento, Estado, Pais, Region } = require('../../../store/db');
 const moment = require('moment');
 const { registrarBitacora } = require('../../../utils/bitacora_cambios');
 const { validarpermiso } = require('../../../auth');
@@ -33,10 +33,10 @@ const consultar = async (query, include = 1) => {
                     attributes: ['descripcion'],
                 },
                 {
-                    model: Pais,
-                    as: "Pais",
+                    model: Region,
+                    as: "Region",
                     required: true,
-                    attributes: ['descripcion','nacionalidad']
+                    attributes: ['descripcion']
                 }],
                 where: [query],
                 order: [
@@ -52,10 +52,10 @@ const consultar = async (query, include = 1) => {
                     attributes: ['descripcion'],
                 },
                 {
-                    model: Pais,
-                    as: "Pais",
+                    model: Region,
+                    as: "Region",
                     required: true,
-                    attributes: ['descripcion','nacionalidad']
+                    attributes: ['descripcion']
                 }],
                 order: [
                     ['departamentoId', 'ASC']
@@ -78,13 +78,13 @@ list = async (req) => {
     }
 
     const { include } = req.query;
-    if (!req.query.id && !req.query.estadoId && !req.query.paisId) {
+    if (!req.query.id && !req.query.estadoId && !req.query.regionId) {
         response.code = 1;
         response.data = await consultar(null, include);
         return response;
     }
 
-    const { id, estadoId, paisId } = req.query;
+    const { id, estadoId, regionId } = req.query;
     let query = {};
     if (estadoId) {
         let estados = estadoId.split(';');
@@ -95,8 +95,8 @@ list = async (req) => {
         query.estadoId = arrayEstado;
     }
 
-    if (paisId) {
-        query.paisId = paisId;
+    if (regionId) {
+        query.regionId = regionId;
     }
 
     if (!id) {

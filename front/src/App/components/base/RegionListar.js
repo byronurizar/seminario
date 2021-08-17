@@ -6,20 +6,19 @@ import { useSelector } from 'react-redux';
 import Aux from '../../../hoc/_Aux';
 import callApi from '../../../helpers/conectorApi';
 import { alert_exitoso, alert_warning } from '../../../helpers/Notificacion';
-import { PaisUpSert } from './PaisUpSert';
+import { RegionUpSert } from './RegionUpSert';
 import { NoAutorizado } from './NoAutorizado';
 import Loading from './Loading';
 const menuId = 8;
-export const PaisListar = () => {
+export const RegionListar = () => {
     const state = useSelector(state => state);
     const [loading, setLoading] = useState(true)
     const [accesos, setAccesos] = useState([]);
     const [abrirModal, setAbrirModal] = useState(false);
-    const [paises, setPaises] = useState([]);
+    const [listRegiones, setListRegiones] = useState([]);
     const initData = {
-        paisId: '',
+        regionId: '',
         descripcion: '',
-        nacionalidad: '',
         estadoId: 1
     };
     const GetAccesosByMenuId = () => {
@@ -37,22 +36,21 @@ export const PaisListar = () => {
         setdataInicial(initData);
     }
 
-    const GetPaises = async () => {
+    const GetRegiones = async () => {
         if (accesos.find(acceso => acceso.accesoId === 3)) {
             setLoading(true);
-            let response = await callApi(`pais?estadoId=1;2`);
+            let response = await callApi(`region?estadoId=1;2`);
             if (response) {
-                setPaises(response);
+                setListRegiones(response);
             }
         }
         setLoading(false);
     }
     const handleEditar = (id) => {
-        const { paisId, descripcion, nacionalidad, estadoId } = paises.find(item => item.paisId === id);
+        const { regionId, descripcion, estadoId } = listRegiones.find(item => item.regionId === id);
         setdataInicial({
-            paisId,
+            regionId,
             descripcion,
-            nacionalidad,
             estadoId
         });
         setAbrirModal(true);
@@ -68,12 +66,12 @@ export const PaisListar = () => {
         }).then(async (willDelete) => {
             if (willDelete.value) {
                 let method = 'DELETE';
-                let response = await callApi(`pais/${id}`, {
+                let response = await callApi(`region/${id}`, {
                     method
                 });
                 if (response) {
                     alert_exitoso(response);
-                    GetPaises();
+                    GetRegiones();
                 }
             } else {
                 alert_warning('No se eliminó ningún elemento');
@@ -85,7 +83,7 @@ export const PaisListar = () => {
     }, []);
 
     useEffect(() => {
-        GetPaises();
+        GetRegiones();
     }, [accesos]);
     return (
         <Aux>
@@ -93,7 +91,7 @@ export const PaisListar = () => {
                 <Col sm={12}>
                     <Card>
                         <Card.Header>
-                            <Card.Title as="h5">Pais</Card.Title>
+                            <Card.Title as="h5">Regiones de Guatemala</Card.Title>
                         </Card.Header>
                         <Card.Body>
                             {
@@ -105,7 +103,7 @@ export const PaisListar = () => {
                                             <Col className="text-right">
                                                 {
                                                     accesos.find(acceso => acceso.accesoId === 1) &&
-                                                    <Button variant="success" className="btn-sm btn-round has-ripple" onClick={handleOpenModal}><i className="feather icon-plus" /> Agregar Pais</Button>
+                                                    <Button variant="success" className="btn-sm btn-round has-ripple" onClick={handleOpenModal}><i className="feather icon-plus" /> Agregar Región</Button>
                                                 }
                                             </Col>
                                         </Row>
@@ -116,7 +114,6 @@ export const PaisListar = () => {
                                                         <tr>
                                                             <th>Código</th>
                                                             <th>Nombre</th>
-                                                            <th>Nacionalidad</th>
                                                             <th>Estado</th>
                                                             {
                                                                 accesos.find(acceso => acceso.accesoId === 2 || acceso.accesoId === 4) &&
@@ -126,22 +123,21 @@ export const PaisListar = () => {
                                                     </thead>
                                                     <tbody>
                                                         {
-                                                            paises.map(({ paisId, descripcion, nacionalidad, Estado: { descripcion: estado } }) => (
-                                                                <tr key={paisId}>
-                                                                    <td>{paisId}</td>
+                                                            listRegiones.map(({ regionId, descripcion, Estado: { descripcion: estado } }) => (
+                                                                <tr key={regionId}>
+                                                                    <td>{regionId}</td>
                                                                     <td>{descripcion}</td>
-                                                                    <td>{nacionalidad}</td>
                                                                     <td>{estado}</td>
                                                                     {
                                                                         accesos.find(acceso => acceso.accesoId === 2 || acceso.accesoId === 4) &&
                                                                         <td style={{ textAlign: "center" }}>
                                                                             {
                                                                                 accesos.find(acceso => acceso.accesoId === 2) &&
-                                                                                <button className="btn-icon btn btn-info btn-sm" onClick={() => { handleEditar(paisId) }}><i className="feather icon-edit" /></button>
+                                                                                <button className="btn-icon btn btn-info btn-sm" onClick={() => { handleEditar(regionId) }}><i className="feather icon-edit" /></button>
                                                                             }
                                                                             {
                                                                                 accesos.find(acceso => acceso.accesoId === 4) &&
-                                                                                <button className="btn-icon btn btn-danger btn-sm" onClick={() => { handleDelete(paisId) }}><i className="feather icon-trash-2" /></button>
+                                                                                <button className="btn-icon btn btn-danger btn-sm" onClick={() => { handleDelete(regionId) }}><i className="feather icon-trash-2" /></button>
                                                                             }
                                                                         </td>
                                                                     }
@@ -156,7 +152,7 @@ export const PaisListar = () => {
                             }
                             {
                                 abrirModal === true &&
-                                <PaisUpSert abrirModal={abrirModal} setAbrirModal={setAbrirModal} GetPaises={GetPaises} dataInicial={dataInicial} />
+                                <RegionUpSert abrirModal={abrirModal} setAbrirModal={setAbrirModal} GetRegiones={GetRegiones} dataInicial={dataInicial} />
                             }
                         </Card.Body>
                     </Card>

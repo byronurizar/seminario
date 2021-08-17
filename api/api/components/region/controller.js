@@ -1,10 +1,10 @@
 const moment = require('moment');
-const { Pais, Estado } = require('../../../store/db');
+const { Region, Estado } = require('../../../store/db');
 const { registrarBitacora } = require('../../../utils/bitacora_cambios');
 const { validarpermiso } = require('../../../auth');
 const MenuId=8;
-const Modelo = Pais;
-const tabla = 'cat_pais';
+const Modelo = Region;
+const tabla = 'cat_region';
 let response = {};
 
 const insert = async (req) => {
@@ -33,7 +33,7 @@ const consultar = async (query,include=1) => {
                 }],
                 where: [query],
                 order: [
-                    ['paisId', 'ASC']
+                    ['regionId', 'ASC']
                 ]
             });
         } else {
@@ -45,7 +45,7 @@ const consultar = async (query,include=1) => {
                     attributes: ['descripcion'],
                 }],
                 order: [
-                    ['paisId', 'ASC']
+                    ['regionId', 'ASC']
                 ]
             });
         }
@@ -87,7 +87,7 @@ list = async (req) => {
         return response;
     } else {
         if (Number(id) > 0) {
-            query.paisId = Number(id);
+            query.regionId = Number(id);
             response.code = 1;
             response.data = await consultar(query, include);
             return response;
@@ -104,22 +104,22 @@ const update = async (req) => {
     if(autorizado!==true){
         return autorizado;
     }
-    const { paisId } = req.body;
+    const { regionId } = req.body;
     const dataAnterior = await Modelo.findOne({
-        where: { paisId }
+        where: { regionId }
     });
 
 
     if (dataAnterior) {
         const resultado = await Modelo.update(req.body, {
             where: {
-                paisId
+                regionId
             }
         });
         if (resultado > 0) {
             let { usuarioId } = req.user;
             req.body.usuario_ult_mod = usuarioId;
-            await registrarBitacora(tabla, paisId, dataAnterior.dataValues, req.body);
+            await registrarBitacora(tabla, regionId, dataAnterior.dataValues, req.body);
 
             //Actualizar fecha de ultima modificacion
             let fecha_ult_mod = moment(new Date()).format('YYYY/MM/DD HH:mm');
@@ -129,7 +129,7 @@ const update = async (req) => {
             }
             const resultadoUpdateFecha = await Modelo.update(data, {
                 where: {
-                    paisId
+                    regionId
                 }
             });
 
@@ -153,9 +153,9 @@ const eliminar = async (req) => {
     if (autorizado !== true) {
         return autorizado;
     }
-    let paisId = req.params.id;
+    let regionId = req.params.id;
     const dataAnterior = await Modelo.findOne({
-        where: { paisId }
+        where: { regionId }
     });
 
     const dataEliminar = {
@@ -164,13 +164,13 @@ const eliminar = async (req) => {
     if (dataAnterior) {
         const resultado = await Modelo.update(dataEliminar, {
             where: {
-                paisId
+                regionId
             }
         });
         if (resultado > 0) {
             let { usuarioId } = req.user;
             dataEliminar.usuario_ult_mod = usuarioId;
-            await registrarBitacora(tabla, paisId, dataAnterior.dataValues, dataEliminar);
+            await registrarBitacora(tabla, regionId, dataAnterior.dataValues, dataEliminar);
 
             //Actualizar fecha de ultima modificacion
             let fecha_ult_mod = moment(new Date()).format('YYYY/MM/DD HH:mm');
@@ -180,7 +180,7 @@ const eliminar = async (req) => {
             }
             const resultadoUpdateFecha = await Modelo.update(data, {
                 where: {
-                    paisId
+                    regionId
                 }
             });
 

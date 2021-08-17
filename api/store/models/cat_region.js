@@ -1,20 +1,13 @@
 module.exports = (sequelize, type) => {
     return sequelize.define(
-        "cat_pais",
+        "cat_region",
         {
-            paisId: {
+            regionId: {
                 type: type.INTEGER,
-                primaryKey: true
+                primaryKey: true,
+                autoIncrement: true,
             },
             descripcion: {
-                type: type.STRING(50),
-                allowNull: false,
-                unique: true,
-                validate: {
-                    notEmpty: true
-                }
-            },
-            nacionalidad: {
                 type: type.STRING(50),
                 allowNull: false,
                 unique: true,

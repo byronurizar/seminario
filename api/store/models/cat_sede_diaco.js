@@ -1,25 +1,39 @@
 module.exports = (sequelize, type) => {
     return sequelize.define(
-        "cat_departamento",
+        "cat_sede_diaco",
         {
-            departamentoId: {
+            sede_diacoId: {
                 type: type.INTEGER,
-                primaryKey: true
+                primaryKey: true,
+                autoIncrement: true,
             },
-            regionId: {
-                type: type.INTEGER,
-                references: {
-                    model: "cat_region",
-                    key: "regionId",
-                }
-            },
-            descripcion: {
-                type: type.STRING(50),
-                allowNull: false,
+            codigo: {
+                type: type.STRING(150),
                 unique: true,
+                allowNull: false,
                 validate: {
                     notEmpty: true
                 }
+            },
+            nombre: {
+                type: type.STRING(150),
+                unique: true,
+                allowNull: false,
+                validate: {
+                    notEmpty: true
+                }
+            },
+            municipioId: {
+                type: type.INTEGER,
+                allowNull: false,
+                references: {
+                    model: "cat_municipio",
+                    key: "municipioId",
+                }
+            },
+            descripcion: {
+                type: type.STRING(300),
+                allowNull: true,
             },
             usuario_crea: {
                 type: type.INTEGER

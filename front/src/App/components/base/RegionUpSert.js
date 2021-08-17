@@ -5,37 +5,37 @@ import callApi from '../../../helpers/conectorApi';
 import { alert_exitoso, alert_warning } from '../../../helpers/Notificacion';
 import { useForm } from '../../hooks/useForm';
 import Loading from './Loading';
-export const PaisUpSert = ({ dataInicial, abrirModal, setAbrirModal, GetPaises }) => {
+export const RegionUpSert = ({ dataInicial, abrirModal, setAbrirModal, GetRegiones }) => {
     const [values, handleOnChange] = useForm(dataInicial);
     const [loading, setLoading] = useState(false)
     const NuevoRegistro = async () => {
-        let response = await callApi('pais', {
+        let response = await callApi('region', {
             method: 'POST',
             body: JSON.stringify(values)
         });
 
         if (response) {
-            alert_exitoso("El pais fue registrado exitosamente");
-            GetPaises();
+            alert_exitoso("La región fue registrada exitosamente");
+            GetRegiones();
             setAbrirModal(false);
         }
     }
     const ActualizarRegistro = async () => {
-        let response = await callApi('pais', {
+        let response = await callApi('region', {
             method: 'PUT',
             body: JSON.stringify(values)
         });
 
         if (response) {
             alert_exitoso(response);
-            GetPaises();
+            GetRegiones();
         }
         setAbrirModal(false);
     }
     const handleOnSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        if (dataInicial.paisId > 0) {
+        if (dataInicial.regionId > 0) {
             await ActualizarRegistro();
         } else {
             await NuevoRegistro();
@@ -55,20 +55,20 @@ export const PaisUpSert = ({ dataInicial, abrirModal, setAbrirModal, GetPaises }
                     <Loading />
                     : <>
                         <Modal.Header closeButton>
-                            <Modal.Title as="h5">{dataInicial.paisId > 0 ? 'Actualizar Información del Pais' : 'Registrar Nuevo Pais'}</Modal.Title>
+                            <Modal.Title as="h5">{dataInicial.regionId > 0 ? 'Actualizar Información de la Región' : 'Registrar Nueva Región'}</Modal.Title>
                         </Modal.Header>
                         <Modal.Body>
                             <ValidationForm onSubmit={handleOnSubmit} onErrorSubmit={handleErrorSubmit}>
                                 <Form.Row>
                                     {
-                                        dataInicial.paisId <= 0 &&
+                                        dataInicial.regionId <= 0 &&
                                         <Form.Group as={Col} md="12">
-                                            <Form.Label htmlFor="paisId">Código</Form.Label>
+                                            <Form.Label htmlFor="regionId">Código</Form.Label>
                                             <TextInput
-                                                name="paisId"
-                                                id="paisId"
+                                                name="regionId"
+                                                id="regionId"
                                                 required
-                                                value={values.paisId}
+                                                value={values.regionId}
                                                 onChange={handleOnChange}
                                                 errorMessage={errorMessage}
                                                 placeholder="Código"
@@ -93,24 +93,8 @@ export const PaisUpSert = ({ dataInicial, abrirModal, setAbrirModal, GetPaises }
                                             type="text"
                                         />
                                     </Form.Group>
-                                    <Form.Group as={Col} md="12">
-                                        <Form.Label htmlFor="nacionalidad">Nacionalidad</Form.Label>
-                                        <TextInput
-                                            name="nacionalidad"
-                                            id="nacionalidad"
-                                            required
-                                            value={values.nacionalidad}
-                                            onChange={handleOnChange}
-                                            errorMessage={errorMessage}
-                                            placeholder="Nacionalidad"
-                                            style={{ textTransform: textTransform }}
-                                            autoComplete="off"
-                                            minLength="5"
-                                            type="text"
-                                        />
-                                    </Form.Group>
                                     {
-                                        dataInicial.paisId > 0 &&
+                                        dataInicial.regionId > 0 &&
                                         <Form.Group as={Col} md="12">
                                             <Form.Label htmlFor="estadoId">Estado</Form.Label>
                                             <SelectGroup
@@ -131,7 +115,7 @@ export const PaisUpSert = ({ dataInicial, abrirModal, setAbrirModal, GetPaises }
                                         <button type="button" onClick={() => { setAbrirModal(false) }} className="btn btn-warning"> Cancelar</button>
                                     </div>
                                     <div className="col-sm-3">
-                                        <button type="submit" className="btn btn-success"> {dataInicial.paisId > 0 ? 'Actualizar' : 'Registrar'}</button>
+                                        <button type="submit" className="btn btn-success"> {dataInicial.regionId > 0 ? 'Actualizar' : 'Registrar'}</button>
                                     </div>
                                 </Form.Row>
                             </ValidationForm>

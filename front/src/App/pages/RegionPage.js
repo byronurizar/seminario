@@ -1,8 +1,8 @@
 import React from 'react';
-import { PaisListar } from '../components/base/PaisListar';
+import { RegionListar } from '../components/base/RegionListar';
 const PaisPage = () => {
     return (
-        <PaisListar/>
+        <RegionListar/>
     )
 }
 

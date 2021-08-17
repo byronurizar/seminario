@@ -1,27 +1,38 @@
 const bcrypt = require('bcrypt')
+
+const Regiones = [
+  { regionId: 1, descripcion: "METROPOLITANA", usuario_crea: 1 },
+  { regionId: 2, descripcion: "NORTE", usuario_crea: 1 },
+  { regionId: 3, descripcion: "NOR-ORIENTE", usuario_crea: 1 },
+  { regionId: 4, descripcion: "SUR-ORIENTE", usuario_crea: 1 },
+  { regionId: 5, descripcion: "CENTRAL", usuario_crea: 1 },
+  { regionId: 6, descripcion: "SUR-OCCIDENTAL", usuario_crea: 1 },
+  { regionId: 7, descripcion: "NOR-OCCIDENTAL", usuario_crea: 1 },
+  { regionId: 8, descripcion: "PETEN", usuario_crea: 1 }
+];
 const Departamentos = [
-  { departamentoId: 1, paisId: 502, descripcion: "GUATEMALA", usuario_crea: 1 },
-  { departamentoId: 2, paisId: 502, descripcion: "EL PROGRESO", usuario_crea: 1 },
-  { departamentoId: 3, paisId: 502, descripcion: "SACATEPEQUEZ", usuario_crea: 1 },
-  { departamentoId: 4, paisId: 502, descripcion: "CHIMALTENANGO", usuario_crea: 1 },
-  { departamentoId: 5, paisId: 502, descripcion: "ESCUINTLA", usuario_crea: 1 },
-  { departamentoId: 6, paisId: 502, descripcion: "SANTA ROSA", usuario_crea: 1 },
-  { departamentoId: 7, paisId: 502, descripcion: "SOLOLA", usuario_crea: 1 },
-  { departamentoId: 8, paisId: 502, descripcion: "TOTONICAPAN", usuario_crea: 1 },
-  { departamentoId: 9, paisId: 502, descripcion: "QUETZALTENANGO", usuario_crea: 1 },
-  { departamentoId: 10, paisId: 502, descripcion: "SUCHITEPEQUEZ", usuario_crea: 1 },
-  { departamentoId: 11, paisId: 502, descripcion: "RETALHULEU", usuario_crea: 1 },
-  { departamentoId: 12, paisId: 502, descripcion: "SAN MARCOS", usuario_crea: 1 },
-  { departamentoId: 13, paisId: 502, descripcion: "HUEHUETENANGO", usuario_crea: 1 },
-  { departamentoId: 14, paisId: 502, descripcion: "EL QUICHE", usuario_crea: 1 },
-  { departamentoId: 15, paisId: 502, descripcion: "BAJA VERAPAZ", usuario_crea: 1 },
-  { departamentoId: 16, paisId: 502, descripcion: "ALTA VERAPAZ", usuario_crea: 1 },
-  { departamentoId: 17, paisId: 502, descripcion: "PETEN", usuario_crea: 1 },
-  { departamentoId: 18, paisId: 502, descripcion: "IZABAL", usuario_crea: 1 },
-  { departamentoId: 19, paisId: 502, descripcion: "ZACAPA", usuario_crea: 1 },
-  { departamentoId: 20, paisId: 502, descripcion: "CHIQUIMULA", usuario_crea: 1 },
-  { departamentoId: 21, paisId: 502, descripcion: "JALAPA", usuario_crea: 1 },
-  { departamentoId: 22, paisId: 502, descripcion: "JUTIAPA" }
+  { departamentoId: 1, regionId: 1, descripcion: "GUATEMALA", usuario_crea: 1 },
+  { departamentoId: 2, regionId: 3, descripcion: "EL PROGRESO", usuario_crea: 1 },
+  { departamentoId: 3, regionId: 5, descripcion: "SACATEPEQUEZ", usuario_crea: 1 },
+  { departamentoId: 4, regionId: 5, descripcion: "CHIMALTENANGO", usuario_crea: 1 },
+  { departamentoId: 5, regionId: 5, descripcion: "ESCUINTLA", usuario_crea: 1 },
+  { departamentoId: 6, regionId: 4, descripcion: "SANTA ROSA", usuario_crea: 1 },
+  { departamentoId: 7, regionId: 6, descripcion: "SOLOLA", usuario_crea: 1 },
+  { departamentoId: 8, regionId: 6, descripcion: "TOTONICAPAN", usuario_crea: 1 },
+  { departamentoId: 9, regionId: 6, descripcion: "QUETZALTENANGO", usuario_crea: 1 },
+  { departamentoId: 10, regionId: 6, descripcion: "SUCHITEPEQUEZ", usuario_crea: 1 },
+  { departamentoId: 11, regionId: 6, descripcion: "RETALHULEU", usuario_crea: 1 },
+  { departamentoId: 12, regionId: 6, descripcion: "SAN MARCOS", usuario_crea: 1 },
+  { departamentoId: 13, regionId: 7, descripcion: "HUEHUETENANGO", usuario_crea: 1 },
+  { departamentoId: 14, regionId: 7, descripcion: "EL QUICHE", usuario_crea: 1 },
+  { departamentoId: 15, regionId: 2, descripcion: "BAJA VERAPAZ", usuario_crea: 1 },
+  { departamentoId: 16, regionId: 2, descripcion: "ALTA VERAPAZ", usuario_crea: 1 },
+  { departamentoId: 17, regionId: 8, descripcion: "PETEN", usuario_crea: 1 },
+  { departamentoId: 18, regionId: 3, descripcion: "IZABAL", usuario_crea: 1 },
+  { departamentoId: 19, regionId: 3, descripcion: "ZACAPA", usuario_crea: 1 },
+  { departamentoId: 20, regionId: 3, descripcion: "CHIQUIMULA", usuario_crea: 1 },
+  { departamentoId: 21, regionId: 4, descripcion: "JALAPA", usuario_crea: 1 },
+  { departamentoId: 22, regionId: 4, descripcion: "JUTIAPA" }
 ];
 
 const Municipios = [
@@ -494,8 +505,8 @@ const Menus = [
   {
     menuId: 8,
     posicion: 8,
-    descripcion: "Pais",
-    href: "/base/catalogo/pais",
+    descripcion: "Region",
+    href: "/base/catalogo/region",
     icono: "",
     classes: "nav-item",
     type: "item",
@@ -721,6 +732,19 @@ const Menus = [
     type: "item",
     menu_padreId: 23,
     visible: false,
+    usuario_crea: 1,
+    fecha_crea: Date.now()
+  },
+  {
+    menuId: 29,
+    posicion: 15,
+    descripcion: "Sede Diaco",
+    href: "/base/catalogo/sedediaco",
+    icono: "",
+    classes: "nav-item",
+    type: "item",
+    menu_padreId: 22,
+    visible: true,
     usuario_crea: 1,
     fecha_crea: Date.now()
   },
@@ -1481,14 +1505,6 @@ const UsuarioRoles = [
     usuario_crea: 1
   }
 ];
-const Paises = [
-  {
-    paisId: 502,
-    descripcion: "GUATEMALA",
-    nacionalidad: "GUATEMALTECO",
-    usuario_crea: 1
-  }
-];
 
 const TiposDocumentos = [
   {
@@ -1720,12 +1736,190 @@ const Parametros = [
     usuario_crea: 1
   }
 ];
+
+const listSedesDiaco=[
+  {
+      sede_diacoId: 1,
+      codigo: "CENTRAL",
+      nombre: "CENTRAL",
+      municipioId:1,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 2,
+      codigo: "CHIMALTENANGO",
+      nombre: "CHIMALTENANGO - DIACO",
+      municipioId:77,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 3,
+      codigo: "JUTIAPA",
+      nombre: "JUTIAPA - DIACO",
+      municipioId:321,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 4,
+      codigo: "SAN MARCOS",
+      nombre: "SAN MARCOS - DIACO",
+      municipioId:183,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 5,
+      codigo: "SUCHITEPEQUEZ",
+      nombre: "SUCHITEPEQUEZ - DIACO",
+      municipioId:165,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 6,
+      codigo: "JALAPA",
+      nombre: "JALAPA - DIACO",
+      municipioId:314,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 7,
+      codigo: "COBAN",
+      nombre: "COBAN - DIACO",
+      municipioId:259,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 8,
+      codigo: "CHIQUIMULA",
+      nombre: "CHIQUIMULA - DIACO",
+      municipioId:303,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 9,
+      codigo: "ESCUINTLA",
+      nombre: "ESCUINTLA - DIACO",
+      municipioId:93,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 10,
+      codigo: "HUEHUETENANGO",
+      nombre: "HUEHUETENANGO - DIACO",
+      municipioId:212,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 11,
+      codigo: "IZABAL",
+      nombre: "IZABAL - DIACO",
+      municipioId:288,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 12,
+      codigo: "PETEN",
+      nombre: "PETEN - DIACO",
+      municipioId:280,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 13,
+      codigo: "QUETZALTENANGO",
+      nombre: "QUETZALTENANGO - DIACO",
+      municipioId:138,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 14,
+      codigo: "QUICHE",
+      nombre: "QUICHE - DIACO",
+      municipioId:243,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 15,
+      codigo: "TOTONICAPAN",
+      nombre: "TOTONICAPAN - DIACO",
+      municipioId:130,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 16,
+      codigo: "ZACAPA",
+      nombre: "ZACAPA - DIACO",
+      municipioId:293,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 17,
+      codigo: "SACATEPEQUEZ",
+      nombre: "SACATEPEQUEZ-DIACO",
+      municipioId:61,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 18,
+      codigo: "BAJA VERAPAZ",
+      nombre: "-DIACO- BAJA VERAPAZ",
+      municipioId:251,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 19,
+      codigo: "SOLOLA",
+      nombre: "SOLOLA - DIACO",
+      municipioId:16,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 20,
+      codigo: "RETALHULEU",
+      nombre: "RETALHULEU - DIACO",
+      municipioId:24,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 21,
+      codigo: "MIXCO",
+      nombre: "MIXCO DIACO",
+      municipioId:8,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 22,
+      codigo: "VILLA NUEVA",
+      nombre: "VILLA NUEVA - DIACO",
+      municipioId:51,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 24,
+      codigo: "EL PROGRESO",
+      nombre: "DIACO EL PROGRESO",
+      municipioId:322,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 25,
+      codigo: "SANTA ROSA",
+      nombre: "SANTA ROSA-DIACO",
+      municipioId:15,
+      usuario_crea: 1
+  },
+  {
+      sede_diacoId: 26,
+      codigo: "SEDE-VILLA NUEVA",
+      nombre: "SEDE-DIACO-VILLA NUEVA",
+      municipioId:51,
+      usuario_crea: 1
+  }
+];
 module.exports = {
   Estados,
   Generos,
   Personas,
   Usuarios,
-  Paises,
+  Regiones,
   Departamentos,
   Municipios,
   Menus,
@@ -1738,5 +1932,6 @@ module.exports = {
   TiposTelefonos,
   EstadosCiviles,
   TiposSangre,
-  Parametros
+  Parametros,
+  listSedesDiaco
 }

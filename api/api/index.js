@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const cookieParser=require('cookie-parser');
+const cookieParser = require('cookie-parser');
 const passport = require('passport');
 const cors = require('cors');
 const config = require('../config');
@@ -10,7 +10,7 @@ require("../store/db");
 
 const Estado = require('./components/estado/network');
 const Municipio = require('./components/municipio/network');
-const Pais = require('./components/pais/network');
+const Region = require('./components/region/network');
 const Departamento = require('./components/departamento/network');
 const Genero = require('./components/genero/network');
 const EstadoCivil = require('./components/estadocivil/network');
@@ -33,7 +33,7 @@ const Auth = require('./components/auth/network');
 const ResetPassword = require('./components/resetpassword/network');
 const Bitacora = require('./components/bitacora/network');
 const FotoUsuario = require('./components/fotousuario/network');
-
+const SedeDiaco = require('./components/sedediaco/network');
 //Estratgia de json web token
 require('../auth/strategies/jwt');
 
@@ -45,7 +45,7 @@ app.use(cors());
 app.use('/api/auth', Auth);
 app.use('/api/estado', passport.authenticate('jwt', { session: false }), Estado);
 app.use('/api/municipio', passport.authenticate('jwt', { session: false }), Municipio);
-app.use('/api/pais', passport.authenticate('jwt', { session: false }), Pais);
+app.use('/api/region', passport.authenticate('jwt', { session: false }), Region);
 app.use('/api/departamento', passport.authenticate('jwt', { session: false }), Departamento);
 app.use('/api/estadocivil', passport.authenticate('jwt', { session: false }), EstadoCivil);
 app.use('/api/tipodocumento', passport.authenticate('jwt', { session: false }), TipoDocumento);
@@ -67,7 +67,7 @@ app.use('/api/menuacceso', passport.authenticate('jwt', { session: false }), Men
 app.use('/api/rolmenuacceso', passport.authenticate('jwt', { session: false }), RolMenuAcceso);
 app.use('/api/resetpassword', ResetPassword);
 app.use('/api/bitacora', passport.authenticate('jwt', { session: false }), Bitacora);
-
+app.use('/api/sedediaco', passport.authenticate('jwt', { session: false }), SedeDiaco);
 //Es muy importante que sea el ultimo middelware
 app.use(errors);
 
