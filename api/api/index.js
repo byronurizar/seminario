@@ -34,6 +34,10 @@ const ResetPassword = require('./components/resetpassword/network');
 const Bitacora = require('./components/bitacora/network');
 const FotoUsuario = require('./components/fotousuario/network');
 const SedeDiaco = require('./components/sedediaco/network');
+const Comercio = require('./components/comercio/network');
+const Sucursal = require('./components/sucursal/network');
+const EstadoQueja = require('./components/estadoqueja/network');
+
 //Estratgia de json web token
 require('../auth/strategies/jwt');
 
@@ -68,6 +72,10 @@ app.use('/api/rolmenuacceso', passport.authenticate('jwt', { session: false }), 
 app.use('/api/resetpassword', ResetPassword);
 app.use('/api/bitacora', passport.authenticate('jwt', { session: false }), Bitacora);
 app.use('/api/sedediaco', passport.authenticate('jwt', { session: false }), SedeDiaco);
+app.use('/api/comercio', passport.authenticate('jwt', { session: false }), Comercio);
+app.use('/api/sucursal', passport.authenticate('jwt', { session: false }), Sucursal);
+app.use('/api/estadoqueja', passport.authenticate('jwt', { session: false }), EstadoQueja);
+
 //Es muy importante que sea el ultimo middelware
 app.use(errors);
 

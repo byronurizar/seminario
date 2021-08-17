@@ -16,7 +16,7 @@ const confiBd = new Sequelize(
       typeCast: true,
     },
     logging: false, //Evitamos que nos muestre lo que hace con la bd
-     timezone: "-06:00",
+    timezone: "-06:00",
   }
 );
 
@@ -48,7 +48,11 @@ const TelefonoPersonaModel = require('./models/telefono_persona');
 const ResetPassWordModel = require('./models/reset_password');
 const ParametroModel = require('./models/cat_parametro');
 const SedeDiacoModel = require('./models/cat_sede_diaco');
-
+const ComercioModel = require('./models/cat_comercio');
+const SucursalModel = require('./models/cat_sucursal');
+const EstadoQuejaModel = require('./models/cat_estado_queja');
+const QuejaModel = require('./models/queja');
+const MediaModel = require('./models/media');
 
 
 const Estado = EstadoModel(confiBd, Sequelize);
@@ -77,260 +81,314 @@ const FotoUsuario = FotoUsuarioModel(confiBd, Sequelize);
 const TelefonoPersona = TelefonoPersonaModel(confiBd, Sequelize);
 const ResetPassWord = ResetPassWordModel(confiBd, Sequelize);
 const Parametro = ParametroModel(confiBd, Sequelize);
-const SedeDiaco=SedeDiacoModel(confiBd,Sequelize);
-EstadoCivil.belongsTo(Estado,{
+const SedeDiaco = SedeDiacoModel(confiBd, Sequelize);
+const Comercio = ComercioModel(confiBd, Sequelize);
+const Sucursal = SucursalModel(confiBd, Sequelize);
+const EstadoQueja = EstadoQuejaModel(confiBd, Sequelize);
+const Queja = QuejaModel(confiBd, Sequelize);
+const Media = MediaModel(confiBd, Sequelize);
+
+EstadoCivil.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-Region.belongsTo(Estado,{
+Region.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-Departamento.belongsTo(Estado,{
+Departamento.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-Departamento.belongsTo(Region,{
+Departamento.belongsTo(Region, {
   as: "Region",
   foreignKey: "regionId",
   onDelete: "CASCADE",
 });
 
-Municipio.belongsTo(Estado,{
+Municipio.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-Municipio.belongsTo(Departamento,{
+Municipio.belongsTo(Departamento, {
   as: "Departamento",
   foreignKey: "departamentoId",
   onDelete: "CASCADE",
 });
 
-TipoDocumento.belongsTo(Estado,{
+TipoDocumento.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-TipoTelefono.belongsTo(Estado,{
+TipoTelefono.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-TipoSangre.belongsTo(Estado,{
+TipoSangre.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-Acceso.belongsTo(Estado,{
+Acceso.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-Rol.belongsTo(Estado,{
+Rol.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-Persona.belongsTo(Estado,{
+Persona.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-Persona.belongsTo(Genero,{
+Persona.belongsTo(Genero, {
   as: "Genero",
   foreignKey: "generoId",
   onDelete: "CASCADE",
 });
 
-Persona.hasMany(Usuario,{
+Persona.hasMany(Usuario, {
   as: "Usuario",
   foreignKey: "personaId",
   onDelete: "CASCADE",
 });
 
-Persona.hasMany(IdentificacionPersona,{
+Persona.hasMany(IdentificacionPersona, {
   as: "IdentificacionPersona",
   foreignKey: "personaId",
   onDelete: "CASCADE",
 });
 
-Persona.hasMany(DireccionPersona,{
+Persona.hasMany(DireccionPersona, {
   as: "DireccionPersona",
   foreignKey: "personaId",
   onDelete: "CASCADE",
 });
 
-Persona.hasMany(TelefonoPersona,{
+Persona.hasMany(TelefonoPersona, {
   as: "TelefonoPersona",
   foreignKey: "personaId",
   onDelete: "CASCADE",
 });
 
-Persona.hasMany(DatoExtraPersona,{
+Persona.hasMany(DatoExtraPersona, {
   as: "DatoExtraPersona",
   foreignKey: "personaId",
   onDelete: "CASCADE",
 });
 
-IdentificacionPersona.belongsTo(Estado,{
+IdentificacionPersona.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-IdentificacionPersona.belongsTo(TipoDocumento,{
+IdentificacionPersona.belongsTo(TipoDocumento, {
   as: "TipoDocumento",
   foreignKey: "tipo_documentoId",
   onDelete: "CASCADE",
 });
 
-TelefonoPersona.belongsTo(Estado,{
+TelefonoPersona.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-TelefonoPersona.belongsTo(TipoTelefono,{
+TelefonoPersona.belongsTo(TipoTelefono, {
   as: "TipoTelefono",
   foreignKey: "tipo_telefonoId",
   onDelete: "CASCADE",
 });
 
-DireccionPersona.belongsTo(Estado,{
+DireccionPersona.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-DireccionPersona.belongsTo(Municipio,{
+DireccionPersona.belongsTo(Municipio, {
   as: "Municipio",
   foreignKey: "municipioId",
   onDelete: "CASCADE",
 });
 
-DatoExtraPersona.belongsTo(Estado,{
+DatoExtraPersona.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-DatoExtraPersona.belongsTo(TipoSangre,{
+DatoExtraPersona.belongsTo(TipoSangre, {
   as: "TipoSangre",
   foreignKey: "tipo_sangreId",
   onDelete: "CASCADE",
 });
 
-DatoExtraPersona.belongsTo(EstadoCivil,{
+DatoExtraPersona.belongsTo(EstadoCivil, {
   as: "EstadoCivil",
   foreignKey: "estado_civilId",
   onDelete: "CASCADE",
 });
 
-Usuario.belongsTo(Estado,{
+Usuario.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-Usuario.belongsTo(Persona,{
+Usuario.belongsTo(Persona, {
   as: "Persona",
   foreignKey: "personaId",
   onDelete: "CASCADE",
 });
 
-UsuarioRol.belongsTo(Estado,{
+UsuarioRol.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-UsuarioRol.belongsTo(Rol,{
+UsuarioRol.belongsTo(Rol, {
   as: "Rol",
   foreignKey: "rolId",
   onDelete: "CASCADE",
 });
 
-UsuarioRol.belongsTo(Usuario,{
+UsuarioRol.belongsTo(Usuario, {
   as: "Usuario",
   foreignKey: "usuarioId",
   onDelete: "CASCADE",
 });
 
-MenuAcceso.belongsTo(Menu,{
+MenuAcceso.belongsTo(Menu, {
   as: "Menu",
   foreignKey: "menuId",
   onDelete: "CASCADE",
 });
 
-MenuAcceso.belongsTo(Estado,{
+MenuAcceso.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-MenuAcceso.belongsTo(Acceso,{
+MenuAcceso.belongsTo(Acceso, {
   as: "Acceso",
   foreignKey: "accesoId",
   onDelete: "CASCADE",
 });
 
-RolMenuAcceso.belongsTo(Estado,{
+RolMenuAcceso.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-RolMenuAcceso.belongsTo(MenuAcceso,{
+RolMenuAcceso.belongsTo(MenuAcceso, {
   as: "MenuAcceso",
   foreignKey: "menu_accesoId",
   onDelete: "CASCADE",
 });
 
-Menu.belongsTo(Estado,{
+Menu.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-Menu.belongsTo(Menu,{
+Menu.belongsTo(Menu, {
   as: "MenuPadre",
   foreignKey: "menu_padreId",
   onDelete: "CASCADE",
 });
 
-SedeDiaco.belongsTo(Estado,{
+SedeDiaco.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
 
-SedeDiaco.belongsTo(Municipio,{
+SedeDiaco.belongsTo(Municipio, {
   as: "Municipio",
   foreignKey: "municipioId",
   onDelete: "CASCADE",
 });
 
-BitacoraCambios.belongsTo(Usuario,{
+Comercio.belongsTo(Estado, {
+  as: "Estado",
+  foreignKey: "estadoId",
+  onDelete: "CASCADE",
+});
+
+Sucursal.belongsTo(Comercio, {
+  as: "Comercio",
+  foreignKey: "comercioId",
+  onDelete: "CASCADE",
+});
+
+Sucursal.belongsTo(Estado, {
+  as: "Estado",
+  foreignKey: "estadoId",
+  onDelete: "CASCADE",
+});
+
+EstadoQueja.belongsTo(Estado, {
+  as: "Estado",
+  foreignKey: "estadoId",
+  onDelete: "CASCADE",
+});
+
+Queja.belongsTo(SedeDiaco, {
+  as: "SedeDiaco",
+  foreignKey: "sede_diacoId",
+  onDelete: "CASCADE",
+});
+
+Queja.belongsTo(Sucursal, {
+  as: "Sucursal",
+  foreignKey: "sucursalId",
+  onDelete: "CASCADE",
+});
+
+Queja.belongsTo(EstadoQueja, {
+  as: "Estado",
+  foreignKey: "estado_quejaId",
+  onDelete: "CASCADE",
+});
+
+Media.belongsTo(Estado, {
+  as: "Estado",
+  foreignKey: "estadoId",
+  onDelete: "CASCADE",
+});
+
+BitacoraCambios.belongsTo(Usuario, {
   as: "Usuario",
   foreignKey: "usuario_crea",
   onDelete: "CASCADE",
 });
 
-BitacoraPeticion.belongsTo(Usuario,{
+BitacoraPeticion.belongsTo(Usuario, {
   as: "Usuario",
   foreignKey: "usuario_crea",
   onDelete: "CASCADE",
@@ -340,9 +398,9 @@ try {
   confiBd.sync({
     force: false,
   }).then(() => {
-    const { Estados, Generos, Personas, Usuarios,Regiones, Departamentos, Municipios, Menus, Accesos, 
-          MenuAccesos, TiposDocumentos, Roles, MenuAccesosRol, TiposTelefonos, EstadosCiviles, TiposSangre, 
-          UsuarioRoles, Parametros,listSedesDiaco } = require('./data');
+    const { Estados, Generos, Personas, Usuarios, Regiones, Departamentos, Municipios, Menus, Accesos,
+      MenuAccesos, TiposDocumentos, Roles, MenuAccesosRol, TiposTelefonos, EstadosCiviles, TiposSangre,
+      UsuarioRoles, Parametros, listSedesDiaco, listEstadoQueja, listComercios, listSucursales } = require('./data');
     confiBd.query("select count(*) as total from cat_estado", {
       type: QueryTypes.SELECT
     }).then(async (resultado) => {
@@ -366,6 +424,9 @@ try {
         await UsuarioRol.bulkCreate(UsuarioRoles);
         await Parametro.bulkCreate(Parametros);
         await SedeDiaco.bulkCreate(listSedesDiaco);
+        await EstadoQueja.bulkCreate(listEstadoQueja);
+        await Comercio.bulkCreate(listComercios);
+        await Sucursal.bulkCreate(listSucursales);
       }
     });
   });
@@ -401,6 +462,11 @@ module.exports = {
   ResetPassWord,
   Parametro,
   SedeDiaco,
+  Comercio,
+  Sucursal,
+  EstadoQueja,
+  Queja,
+  Media,
   bd: confiBd
 }
 

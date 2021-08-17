@@ -1,48 +1,46 @@
 const moment = require('moment');
-const { SedeDiaco, Municipio, Departamento, Estado, Region } = require('../../../store/db');
+var { Op } = require('sequelize');
+const { Sucursal,Comercio, Estado } = require('../../../store/db');
 const { registrarBitacora } = require('../../../utils/bitacora_cambios');
 const { validarpermiso } = require('../../../auth');
-const MenuId = 29;
-const Modelo = SedeDiaco;
-const tabla = 'cat_sede_diaco';
+const MenuId = 31;
+const Modelo = Sucursal;
+const tabla = 'cat_sucursal';
 let response = {};
+
 
 const insert = async (req) => {
     let autorizado = await validarpermiso(req, MenuId, 1);
     if (autorizado !== true) {
         return autorizado;
     }
-
-    let { usuarioId } = req.user;
-    req.body.usuario_crea = usuarioId;
-    const result = await Modelo.create(req.body);
-    response.code = 1;
-    response.data = result;
-    return response;
+    const { comercioId,nombre } = req.body;
+    const sucursalNombre = await Modelo.findOne({ where: { nombre,comercioId }, attributes: ['sucursalId'] });
+    if (sucursalNombre) {
+        response.code = 0;
+        response.data = `El comercio ya tiene una sucursal con el nombre  ${nombre}, por favor verifique`;
+        return response;
+    } else {
+        let { usuarioId } = req.user;
+        req.body.usuario_crea = usuarioId;
+        const result = await Modelo.create(req.body);
+        response.code = 1;
+        response.data = result;
+        return response;
+    }
 }
 
 const consultar = async (query, include = 1) => {
     if (include == 1) {
         if (query) {
-            return await SedeDiaco.findAll({
-                include: [{
-                    model: Municipio,
-                    as: "Municipio",
-                    required: false,
-                    attributes: ['municipioId', 'municipioId_depto', 'descripcion', 'estadoId'],
-                    include: [{
-                        model: Departamento,
-                        as: "Departamento",
+            return await Sucursal.findAll({
+                include: [
+                    {
+                        model: Comercio,
+                        as: "Comercio",
                         required: true,
-                        attributes: ['departamentoId', 'regionId', 'descripcion', 'estadoId'],
-                        include: [{
-                            model: Region,
-                            as: "Region",
-                            required: true,
-                            attributes: ['regionId', 'descripcion'],
-                        }]
-                    }],
-                }, {
+                        attributes: ['razon_social','nit','correo']
+                    },{
                     model: Estado,
                     as: "Estado",
                     required: true,
@@ -50,36 +48,24 @@ const consultar = async (query, include = 1) => {
                 }],
                 where: [query],
                 order: [
-                    ['sede_diacoId', 'ASC']
+                    ['sucursalId', 'ASC']
                 ]
             });
         } else {
-            return await SedeDiaco.findAll({
-                include: [{
-                    model: Municipio,
-                    as: "Municipio",
-                    required: false,
-                    attributes: ['municipioId', 'municipioId_depto', 'descripcion', 'estadoId'],
-                    include: [{
-                        model: Departamento,
-                        as: "Departamento",
-                        required: true,
-                        attributes: ['departamentoId', 'regionId', 'descripcion', 'estadoId'],
-                        include: [{
-                            model: Region,
-                            as: "Region",
-                            required: true,
-                            attributes: ['regionId', 'descripcion'],
-                        }]
-                    }],
-                }, {
+            return await Sucursal.findAll({
+                include: [ {
+                    model: Comercio,
+                    as: "Comercio",
+                    required: true,
+                    attributes: ['razon_social','nit','correo']
+                },{
                     model: Estado,
                     as: "Estado",
                     required: true,
                     attributes: ['descripcion']
                 }],
                 order: [
-                    ['sede_diacoId', 'ASC']
+                    ['sucursalId', 'ASC']
                 ]
             });
         }
@@ -98,13 +84,13 @@ list = async (req) => {
         return autorizado;
     }
     const { include } = req.query;
-    if (!req.query.id && !req.query.estadoId && !req.query.municipioId) {
+    if (!req.query.id && !req.query.estadoId && !req.query.comercioId) {
         response.code = 1;
-        response.data = await consultar(null,include);
+        response.data = await consultar(null, include);
         return response;
     }
 
-    const { id, estadoId, municipioId } = req.query;
+    const { id, estadoId, comercioId } = req.query;
     let query = {};
     if (estadoId) {
         let estados = estadoId.split(';');
@@ -114,21 +100,19 @@ list = async (req) => {
         });
         query.estadoId = arrayEstado;
     }
-
-    if (municipioId) {
-        query.municipioId = municipioId;
+    if (comercioId) {
+        query.comercioId = comercioId;
     }
-
 
     if (!id) {
         response.code = 1;
-        response.data = await consultar(query,include);
+        response.data = await consultar(query, include);
         return response;
     } else {
         if (Number(id) > 0) {
-            query.sede_diacoId = Number(id);
+            query.sucursalId = Number(id);
             response.code = 1;
-            response.data = await consultar(query,include);
+            response.data = await await consultar(query, include);
             return response;
         } else {
             response.code = -1;
@@ -143,9 +127,9 @@ const eliminar = async (req) => {
     if (autorizado !== true) {
         return autorizado;
     }
-    let sede_diacoId = req.params.id;
+    let sucursalId = req.params.id;
     const dataAnterior = await Modelo.findOne({
-        where: { sede_diacoId }
+        where: { sucursalId }
     });
 
     const dataEliminar = {
@@ -154,13 +138,13 @@ const eliminar = async (req) => {
     if (dataAnterior) {
         const resultado = await Modelo.update(dataEliminar, {
             where: {
-                sede_diacoId
+                sucursalId
             }
         });
         if (resultado > 0) {
             let { usuarioId } = req.user;
             dataEliminar.usuario_ult_mod = usuarioId;
-            await registrarBitacora(tabla, sede_diacoId, dataAnterior.dataValues, dataEliminar);
+            await registrarBitacora(tabla, sucursalId, dataAnterior.dataValues, dataEliminar);
 
             //Actualizar fecha de ultima modificacion
             let fecha_ult_mod = moment(new Date()).format('YYYY/MM/DD HH:mm');
@@ -170,7 +154,7 @@ const eliminar = async (req) => {
             }
             const resultadoUpdateFecha = await Modelo.update(data, {
                 where: {
-                    sede_diacoId
+                    sucursalId
                 }
             });
 
@@ -194,23 +178,41 @@ const update = async (req) => {
     if (autorizado !== true) {
         return autorizado;
     }
-    const { sede_diacoId } = req.body;
+    const { nombre, sucursalId } = req.body;
+    if (nombre) {
+        const sucursalItem = await Modelo.findOne(
+            {
+                where:
+                {
+                    nombre,
+                    sucursalId: { [Op.ne]: sucursalId }
+                },
+                attributes: ['sucursalId']
+            });
+
+        if (sucursalItem) {
+            response.code = -1;
+            response.data = `El comercio ya tiene una sucursal con el nombre  ${nombre}, por favor verifique`;
+            return response;
+        }
+    }
+
     const dataAnterior = await Modelo.findOne({
-        where: { sede_diacoId }
+        where: { sucursalId }
     });
-
-
+    if (req.body.correo) {
+        req.body.correo = req.body.correo.toLowerCase();
+    }
     if (dataAnterior) {
         const resultado = await Modelo.update(req.body, {
             where: {
-                sede_diacoId
+                sucursalId
             }
         });
         if (resultado > 0) {
             let { usuarioId } = req.user;
             req.body.usuario_ult_mod = usuarioId;
-            await registrarBitacora(tabla, sede_diacoId, dataAnterior.dataValues, req.body);
-
+            await registrarBitacora(tabla, sucursalId, dataAnterior.dataValues, req.body);
             //Actualizar fecha de ultima modificacion
             let fecha_ult_mod = moment(new Date()).format('YYYY/MM/DD HH:mm');
             const data = {
@@ -219,7 +221,7 @@ const update = async (req) => {
             }
             const resultadoUpdateFecha = await Modelo.update(data, {
                 where: {
-                    sede_diacoId
+                    sucursalId
                 }
             });
 
