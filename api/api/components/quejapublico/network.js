@@ -5,6 +5,7 @@ const controllerMunicipios = require('../municipio/controller');
 const controllerComercio = require('../comercio/controller');
 const controllerSucursal = require('../sucursal/controller');
 const response = require('../../../network/response');
+const { uploadFiles } = require('../../../utils/multer.config');
 const router = express.Router();
 
 const registrar = (req, res, next) => {
@@ -46,7 +47,7 @@ const listarSucursales = (req, res, next) => {
         .catch(next);
 }
 
-router.post('/', registrar);
+router.post('/',uploadFiles.array('files'), registrar);
 router.get('/deptos', listarDepartamentos);
 router.get('/muns', listarMunicipios);
 router.get('/comers', listarComercios);
