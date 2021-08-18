@@ -2,17 +2,17 @@ const moment = require('moment');
 const { Municipio, Estado, Departamento } = require('../../../store/db');
 const { registrarBitacora } = require('../../../utils/bitacora_cambios');
 const { validarpermiso } = require('../../../auth');
-const MenuId=10;
+const MenuId = 10;
 const Modelo = Municipio;
 const tabla = 'cat_municipio';
 let response = {};
 
 const insert = async (req) => {
-    let autorizado=await validarpermiso(req,MenuId,1);
-    if(autorizado!==true){
+    let autorizado = await validarpermiso(req, MenuId, 1);
+    if (autorizado !== true) {
         return autorizado;
     }
-    
+
     let { usuarioId } = req.user;
     req.body.usuario_crea = usuarioId;
     const result = await Modelo.create(req.body);
@@ -70,19 +70,21 @@ const consultar = async (query, include = 1) => {
     }
 }
 
-list = async (req) => {
-    let autorizado=await validarpermiso(req,MenuId,3);
-    if(autorizado!==true){
-        return autorizado;
+list = async (req, isPublico = false) => {
+    if (!isPublico) {
+        let autorizado = await validarpermiso(req, MenuId, 3);
+        if (autorizado !== true) {
+            return autorizado;
+        }
     }
     const { include } = req.query;
     if (!req.query.id && !req.query.estadoId && !req.query.departamentoId) {
         response.code = 1;
-        response.data = await  await consultar(null, include);
+        response.data = await await consultar(null, include);
         return response;
     }
 
-    const { id, estadoId,departamentoId } = req.query;
+    const { id, estadoId, departamentoId } = req.query;
     let query = {};
     if (estadoId) {
         let estados = estadoId.split(';');
@@ -93,8 +95,8 @@ list = async (req) => {
         query.estadoId = arrayEstado;
     }
 
-    if(departamentoId){
-        query.departamentoId=departamentoId;
+    if (departamentoId) {
+        query.departamentoId = departamentoId;
     }
 
 
@@ -106,7 +108,7 @@ list = async (req) => {
         if (Number(id) > 0) {
             query.municipioId = Number(id);
             response.code = 1;
-            response.data =await consultar(query, include);
+            response.data = await consultar(query, include);
             return response;
         } else {
             response.code = -1;
@@ -117,8 +119,8 @@ list = async (req) => {
 }
 
 const update = async (req) => {
-    let autorizado=await validarpermiso(req,MenuId,2);
-    if(autorizado!==true){
+    let autorizado = await validarpermiso(req, MenuId, 2);
+    if (autorizado !== true) {
         return autorizado;
     }
     const { municipioId } = req.body;
@@ -142,7 +144,7 @@ const update = async (req) => {
             let fecha_ult_mod = moment(new Date()).format('YYYY/MM/DD HH:mm');
             const data = {
                 fecha_ult_mod,
-                usuario_ult_mod:usuarioId
+                usuario_ult_mod: usuarioId
             }
             const resultadoUpdateFecha = await Modelo.update(data, {
                 where: {

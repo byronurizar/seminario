@@ -84,11 +84,13 @@ const consultar = async (query, include = 1) => {
     }
 }
 
-list = async (req) => {
+list = async (req,isPublico=false) => {
+    if(!isPublico){
     let autorizado = await validarpermiso(req, MenuId, 3);
     if (autorizado !== true) {
         return autorizado;
     }
+}
     const { include } = req.query;
     if (!req.query.id && !req.query.estadoId && !req.query.email && !req.query.nit) {
         response.code = 1;

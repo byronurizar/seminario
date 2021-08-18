@@ -1,6 +1,6 @@
 const moment = require('moment');
 var { Op } = require('sequelize');
-const { Sucursal,Comercio, Estado } = require('../../../store/db');
+const { Sucursal, Comercio, Estado } = require('../../../store/db');
 const { registrarBitacora } = require('../../../utils/bitacora_cambios');
 const { validarpermiso } = require('../../../auth');
 const MenuId = 31;
@@ -14,8 +14,8 @@ const insert = async (req) => {
     if (autorizado !== true) {
         return autorizado;
     }
-    const { comercioId,nombre } = req.body;
-    const sucursalNombre = await Modelo.findOne({ where: { nombre,comercioId }, attributes: ['sucursalId'] });
+    const { comercioId, nombre } = req.body;
+    const sucursalNombre = await Modelo.findOne({ where: { nombre, comercioId }, attributes: ['sucursalId'] });
     if (sucursalNombre) {
         response.code = 0;
         response.data = `El comercio ya tiene una sucursal con el nombre  ${nombre}, por favor verifique`;
@@ -39,13 +39,13 @@ const consultar = async (query, include = 1) => {
                         model: Comercio,
                         as: "Comercio",
                         required: true,
-                        attributes: ['razon_social','nit','correo']
-                    },{
-                    model: Estado,
-                    as: "Estado",
-                    required: true,
-                    attributes: ['descripcion']
-                }],
+                        attributes: ['razon_social', 'nit', 'correo']
+                    }, {
+                        model: Estado,
+                        as: "Estado",
+                        required: true,
+                        attributes: ['descripcion']
+                    }],
                 where: [query],
                 order: [
                     ['sucursalId', 'ASC']
@@ -53,12 +53,12 @@ const consultar = async (query, include = 1) => {
             });
         } else {
             return await Sucursal.findAll({
-                include: [ {
+                include: [{
                     model: Comercio,
                     as: "Comercio",
                     required: true,
-                    attributes: ['razon_social','nit','correo']
-                },{
+                    attributes: ['razon_social', 'nit', 'correo']
+                }, {
                     model: Estado,
                     as: "Estado",
                     required: true,
@@ -78,10 +78,12 @@ const consultar = async (query, include = 1) => {
     }
 }
 
-list = async (req) => {
-    let autorizado = await validarpermiso(req, MenuId, 3);
-    if (autorizado !== true) {
-        return autorizado;
+list = async (req, isPublico) => {
+    if (!isPublico) {
+        let autorizado = await validarpermiso(req, MenuId, 3);
+        if (autorizado !== true) {
+            return autorizado;
+        }
     }
     const { include } = req.query;
     if (!req.query.id && !req.query.estadoId && !req.query.comercioId) {
