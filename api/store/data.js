@@ -2787,7 +2787,7 @@ const Menus = [
     menuId: 31,
     posicion: 15,
     descripcion: "Sucursales",
-    href: "/base/catalogo/comercio",
+    href: "",
     icono: "",
     classes: "nav-item",
     type: "item",

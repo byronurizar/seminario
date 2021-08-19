@@ -92,7 +92,7 @@ list = async (req,isPublico=false) => {
     }
 }
     const { include } = req.query;
-    if (!req.query.id && !req.query.estadoId && !req.query.email && !req.query.nit) {
+    if (!req.query.id && !req.query.estadoId  && !req.query.nit) {
         response.code = 1;
         response.data = await consultar(null, include);
         return response;
@@ -112,9 +112,6 @@ list = async (req,isPublico=false) => {
         query.nit = String(nit).trim().replace("-", "");
     }
 
-    if (email) {
-        query.email = email;
-    }
     if (!id) {
         response.code = 1;
         response.data = await consultar(query, include);

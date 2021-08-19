@@ -13,7 +13,7 @@ import Loading from './Loading';
 import { asignarEstiloTabla, limpiarEstiloTabla } from '../../../helpers/estiloTabla';
 const menuId = 10;
 const menuIdDepartamento = 9;
-const menuIdPais = 8;
+const menuIdRegion = 8;
 export const MunicipioListar = () => {
     const state = useSelector(state => state);
     const [accesos, setAccesos] = useState([]);
@@ -24,7 +24,7 @@ export const MunicipioListar = () => {
     const [municipios, setMunicipios] = useState([]);
     const initData = {
         departamentoId: '',
-        paisId: '',
+        regionId: '',
         descripcion: '',
         municipioId_depto: '',
         estadoId: 1
@@ -33,7 +33,7 @@ export const MunicipioListar = () => {
     const GetAccesosByMenuId = () => {
         if (state?.accesos) {
             const { accesos } = state;
-            const misAccesos = accesos.filter(item => (item.menuId === menuId || item.menuId === menuIdDepartamento || item.menuId === menuIdPais));
+            const misAccesos = accesos.filter(item => (item.menuId === menuId || item.menuId === menuIdDepartamento || item.menuId === menuIdRegion));
             setAccesos(misAccesos);
         }
         setLoading(false);
@@ -46,14 +46,14 @@ export const MunicipioListar = () => {
         setdataInicial(initData);
     }
     const GetPaises = async () => {
-        if (accesos.find(acceso => acceso.menuId === menuIdPais && acceso.accesoId === 3)) {
+        if (accesos.find(acceso => acceso.menuId === menuIdRegion && acceso.accesoId === 3)) {
             setLoading(true);
-            let response = await callApi('pais?include=0?estadoId=1');
+            let response = await callApi('region?include=0?estadoId=1');
             if (response) {
                 setCatPais(response);
             }
         } else {
-            setCatPais([{ paisId: '', descripcion: 'No esta autorizado' }]);
+            setCatPais([{ regionId: '', descripcion: 'No esta autorizado' }]);
         }
         setLoading(false);
     }
@@ -61,7 +61,7 @@ export const MunicipioListar = () => {
         if (id > 0) {
             if (accesos.find(acceso => acceso.menuId === menuIdDepartamento && acceso.accesoId === 3)) {
                 setLoading(true);
-                let response = await callApi(`departamento?paisId=${id}&estadoId=1&include=0`);
+                let response = await callApi(`departamento?regionId=${id}&estadoId=1&include=0`);
                 if (response) {
                     setDepartamentos(response);
                 }
@@ -86,7 +86,7 @@ export const MunicipioListar = () => {
         }
     }
 
-    const handleChangePais = ({ target: { value } }) => {
+    const handleChangeRegion = ({ target: { value } }) => {
         GetDepartamentos(value);
         setMunicipios([]);
     }
@@ -95,13 +95,13 @@ export const MunicipioListar = () => {
     }
     const handleEditar = (id) => {
         const { municipioId, departamentoId, municipioId_depto, descripcion, estadoId } = municipios.find(item => item.municipioId === id);
-        const { paisId } = departamentos.find(item => item.departamentoId === departamentoId);
+        const { regionId } = departamentos.find(item => item.departamentoId === departamentoId);
         setdataInicial({
             municipioId,
             departamentoId,
             municipioId_depto,
             descripcion,
-            paisId,
+            regionId,
             estadoId
         });
         setAbrirModal(true);
@@ -153,17 +153,17 @@ export const MunicipioListar = () => {
                                     <ValidationForm onSubmit={GetDepartamentos} onErrorSubmit={GetDepartamentos}>
                                         <Form.Row>
                                             <Form.Group as={Col} md="6">
-                                                <Form.Label htmlFor="paisId">Pais</Form.Label>
+                                                <Form.Label htmlFor="regionId">Region</Form.Label>
                                                 <SelectGroup
-                                                    onChange={handleChangePais}
-                                                    name="paisId"
-                                                    id="paisId"
-                                                    errorMessage="Seleccione un Pais"
+                                                    onChange={handleChangeRegion}
+                                                    name="regionId"
+                                                    id="regionId"
+                                                    errorMessage="Seleccione una Región"
                                                     required>
-                                                    <option value="">Seleccione un Pais</option>
+                                                    <option value="">Seleccione una Región</option>
                                                     {
-                                                        catPaises.map(({ paisId, descripcion }) => (
-                                                            <option value={paisId} key={paisId}>{descripcion}</option>
+                                                        catPaises.map(({ regionId, descripcion }) => (
+                                                            <option value={regionId} key={regionId}>{descripcion}</option>
                                                         ))
                                                     }
                                                 </SelectGroup>

@@ -23,6 +23,8 @@ const peticion = React.lazy(() => import('./App/pages/BitacoraPeticionesPage'));
 const cambios = React.lazy(() => import('./App/pages/BitacoraCambiosPage'));
 const infoUser = React.lazy(() => import('./App/pages/InformacionUsuario'));
 const noEncontrado = React.lazy(() => import('./App/pages/NoEncontradoPage'));
+const sedeDiaco = React.lazy(() => import('./App/pages/SedeDiacoPage'));
+const comercio = React.lazy(() => import('./App/pages/ComercioPage'));
 const routes = [
     { path: '/base/home', exact: true, name: 'Inicio', component: home },
     { path: '/base/catalogo/region', exact: true, name: 'Region', component: region },
@@ -43,6 +45,8 @@ const routes = [
     { path: '/base/seguridad/bitacora/peticion', exact: true, name: 'peticion', component: peticion },
     { path: '/base/seguridad/bitacora/cambios', exact: true, name: 'cambios', component: cambios },
     { path: '/base/infouser', exact: true, name: 'infouser', component: infoUser },
+    { path: '/base/catalogo/sedediaco', exact: true, name: 'SedeDiaco', component: sedeDiaco },
+    { path: '/base/catalogo/comercio', exact: true, name: 'Comercio', component: comercio },
     { name: 'noEncontrado', component: noEncontrado }
 ];
 

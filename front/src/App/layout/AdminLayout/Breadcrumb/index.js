@@ -90,7 +90,7 @@ class Breadcrumb extends Component {
 
         }
 
-        document.title = title + ' | Front Base';
+        document.title = title + ' | DIACO';
 
         return (
             <Aux>

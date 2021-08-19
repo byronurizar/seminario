@@ -33,7 +33,7 @@ const consultar = async (query) => {
                     model: Departamento,
                     as: "Departamento",
                     required: true,
-                    attributes: ['departamentoId', 'paisId', 'descripcion', 'estadoId'],
+                    attributes: ['departamentoId', 'regionId', 'descripcion', 'estadoId'],
                 }],
             }, {
                 model: Estado,
@@ -57,7 +57,7 @@ const consultar = async (query) => {
                     model: Departamento,
                     as: "Departamento",
                     required: true,
-                    attributes: ['departamentoId', 'paisId', 'descripcion', 'estadoId'],
+                    attributes: ['departamentoId', 'regionId', 'descripcion', 'estadoId'],
                 }],
             }, {
                 model: Estado,

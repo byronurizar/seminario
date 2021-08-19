@@ -1,6 +1,6 @@
 const moment = require('moment');
 var { Op } = require('sequelize');
-const { Sucursal, Comercio, Estado } = require('../../../store/db');
+const { Sucursal, Comercio, Estado, Municipio, Departamento, Region } = require('../../../store/db');
 const { registrarBitacora } = require('../../../utils/bitacora_cambios');
 const { validarpermiso } = require('../../../auth');
 const MenuId = 31;
@@ -36,6 +36,24 @@ const consultar = async (query, include = 1) => {
             return await Sucursal.findAll({
                 include: [
                     {
+                        model: Municipio,
+                        as: "Municipio",
+                        required: false,
+                        attributes: ['municipioId', 'municipioId_depto', 'descripcion', 'estadoId'],
+                        include: [{
+                            model: Departamento,
+                            as: "Departamento",
+                            required: true,
+                            attributes: ['departamentoId', 'regionId', 'descripcion', 'estadoId'],
+                            include: [{
+                                model: Region,
+                                as: "Region",
+                                required: true,
+                                attributes: ['regionId', 'descripcion'],
+                            }]
+                        }],
+                    },
+                    {
                         model: Comercio,
                         as: "Comercio",
                         required: true,
@@ -54,6 +72,23 @@ const consultar = async (query, include = 1) => {
         } else {
             return await Sucursal.findAll({
                 include: [{
+                    model: Municipio,
+                    as: "Municipio",
+                    required: false,
+                    attributes: ['municipioId', 'municipioId_depto', 'descripcion', 'estadoId'],
+                    include: [{
+                        model: Departamento,
+                        as: "Departamento",
+                        required: true,
+                        attributes: ['departamentoId', 'regionId', 'descripcion', 'estadoId'],
+                        include: [{
+                            model: Region,
+                            as: "Region",
+                            required: true,
+                            attributes: ['regionId', 'descripcion'],
+                        }]
+                    }],
+                },{
                     model: Comercio,
                     as: "Comercio",
                     required: true,

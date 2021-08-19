@@ -346,6 +346,13 @@ Sucursal.belongsTo(Comercio, {
   onDelete: "CASCADE",
 });
 
+Sucursal.belongsTo(Municipio, {
+  as: "Municipio",
+  foreignKey: "municipioId",
+  onDelete: "CASCADE",
+});
+
+
 Sucursal.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",

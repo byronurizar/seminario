@@ -9,15 +9,15 @@ export const MunicipioUpSert = ({ dataInicial, abrirModal, setAbrirModal, catPai
     const [values, handleOnChange] = useForm(dataInicial);
     const [loading, setLoading] = useState(false)
     const [departamentos, setDepartamentos] = useState([]);
-    const [infoPais, handleChangeAuxPais] = useState(dataInicial.paisId);
+    const [infoPais, handleChangeAuxPais] = useState(dataInicial.regionId);
 
-    const handleChangePais = ({ target: { value } }) => {
+    const handleChangeRegion = ({ target: { value } }) => {
         GetDepartamentos(value);
         handleChangeAuxPais(value);
     }
     const GetDepartamentos = async (id) => {
         setLoading(true);
-        let response = await callApi(`departamento?paisId=${id}&estadoId=1&include=0`);
+        let response = await callApi(`departamento?regionId=${id}&estadoId=1&include=0`);
         setDepartamentos(response);
         setLoading(false);
     }
@@ -60,7 +60,7 @@ export const MunicipioUpSert = ({ dataInicial, abrirModal, setAbrirModal, catPai
     };
 
     useEffect(() => {
-        GetDepartamentos(dataInicial.paisId);
+        GetDepartamentos(dataInicial.regionId);
     }, []);
 
     const errorMessage = "Campo obligatorio";
@@ -78,18 +78,18 @@ export const MunicipioUpSert = ({ dataInicial, abrirModal, setAbrirModal, catPai
                             <ValidationForm onSubmit={handleOnSubmit} onErrorSubmit={handleErrorSubmit}>
                                 <Form.Row>
                                     <Form.Group as={Col} md="12">
-                                        <Form.Label htmlFor="paisId">Pais</Form.Label>
+                                        <Form.Label htmlFor="regionId">Región</Form.Label>
                                         <SelectGroup
-                                            name="paisId"
-                                            id="paisId"
+                                            name="regionId"
+                                            id="regionId"
                                             required
-                                            onChange={handleChangePais}
+                                            onChange={handleChangeRegion}
                                             value={infoPais}
                                             errorMessage={errorMessage}>
-                                            <option value="">Seleccione un Pais</option>
+                                            <option value="">Seleccione una Región</option>
                                             {
-                                                catPaises.map(({ paisId, descripcion }) => (
-                                                    <option value={paisId} key={paisId}>{descripcion}</option>
+                                                catPaises.map(({ regionId, descripcion }) => (
+                                                    <option value={regionId} key={regionId}>{descripcion}</option>
                                                 )
                                                 )
                                             }
