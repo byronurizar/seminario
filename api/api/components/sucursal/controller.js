@@ -215,12 +215,13 @@ const update = async (req) => {
     if (autorizado !== true) {
         return autorizado;
     }
-    const { nombre, sucursalId } = req.body;
+    const { nombre, sucursalId,comercioId } = req.body;
     if (nombre) {
         const sucursalItem = await Modelo.findOne(
             {
                 where:
                 {
+                    comercioId,
                     nombre,
                     sucursalId: { [Op.ne]: sucursalId }
                 },

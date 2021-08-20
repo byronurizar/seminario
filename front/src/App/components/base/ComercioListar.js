@@ -120,6 +120,11 @@ export const ComercioListar = () => {
     useEffect(() => {
         GetComercios();
     }, [accesos]);
+    useEffect(() => {
+       if(itemComercio.mostrarSucursales==false){
+        asignarEstiloTabla("#mytable", 25);
+       }
+    }, [itemComercio])
     return (
         <>
             {

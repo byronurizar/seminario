@@ -10,7 +10,7 @@ import { alert_exitoso, alert_warning } from '../../../helpers/Notificacion';
 import { limpiarEstiloTabla, asignarEstiloTabla } from '../../../helpers/estiloTabla';
 import { NoAutorizado } from './NoAutorizado';
 import Loading from './Loading';
-import { SedeDiacoUpSert } from './SedeDiacoUpSert';
+import { SucursalUpSert } from './SucursalUpSert';
 const menuId = 31;
 const menuIdRegion = 8;
 const menuIdDepartamento = 9;
@@ -23,7 +23,7 @@ export const SucursalListar = ({itemComercio,FunMostrarComercios}) => {
     const [catRegiones, setRegiones] = useState([]);
     const [listSucursales, setListSucursales] = useState([]);
     const initData = {
-        comercioId: '',
+        comercioId: itemComercio.comercioId,
         nombre: '',
         municipioId: '',
         direccion: '',
@@ -216,7 +216,7 @@ export const SucursalListar = ({itemComercio,FunMostrarComercios}) => {
                             }
                             {
                                 abrirModal === true &&
-                                <SedeDiacoUpSert abrirModal={abrirModal} setAbrirModal={setAbrirModal} catRegiones={catRegiones} GetSucursales={GetSucursales} dataInicial={dataInicial} accesos={accesos} />
+                                <SucursalUpSert abrirModal={abrirModal} setAbrirModal={setAbrirModal} catRegiones={catRegiones} GetSucursales={GetSucursales} dataInicial={dataInicial} accesos={accesos} />
                             }
 
                         </Card.Body>

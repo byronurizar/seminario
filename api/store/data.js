@@ -3581,7 +3581,8 @@ const Usuarios = [
     usuarioId: 1,
     personaId: 1,
     user_name: "BLOPEZ",
-    password: bcrypt.hashSync('blopez', 10)
+    password: bcrypt.hashSync('blopez', 10),
+    forzar_cambio_password:0
   }
 ];
 

@@ -8,7 +8,7 @@ import NoEncontradoPage from '../App/pages/NoEncontradoPage';
 import ActualizarContraseniaPage from '../App/pages/ActualizarContraseniaPage';
 import ResetPasswordPage from '../App/pages/ResetPasswordPage';
 import UpdatePasswordPage from '../App/pages/UpdatePasswordPage';
-
+import QuejaPage from '../App/pages/QuejaPage';
 const AdminLayout = Loadable({
     loader: () => import('../App/layout/AdminLayout'),
     loading: Loader
@@ -18,6 +18,7 @@ const Rutas = () => {
         <BrowserRouter basename={config.basename}>
             <Switch>
                 <Route exact path="/" component={Login}/>
+                <Route exact path="/queja" component={QuejaPage}/>
                 <Route exact path="/auth/login" component={Login}/>
                 <Route exact path="/auth/reset-password" component={ResetPasswordPage}/>
                 <Route exact path="/admin/change-password" component={ActualizarContraseniaPage}/>
