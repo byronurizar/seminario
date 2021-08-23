@@ -340,6 +340,7 @@ Comercio.belongsTo(Estado, {
   onDelete: "CASCADE",
 });
 
+
 Sucursal.belongsTo(Comercio, {
   as: "Comercio",
   foreignKey: "comercioId",
@@ -358,6 +359,7 @@ Sucursal.belongsTo(Estado, {
   foreignKey: "estadoId",
   onDelete: "CASCADE",
 });
+
 
 EstadoQueja.belongsTo(Estado, {
   as: "Estado",

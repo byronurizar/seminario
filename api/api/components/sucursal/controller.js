@@ -121,13 +121,13 @@ list = async (req, isPublico) => {
         }
     }
     const { include } = req.query;
-    if (!req.query.id && !req.query.estadoId && !req.query.comercioId) {
+    if (!req.query.id && !req.query.estadoId && !req.query.comercioId &!req.query.municipioId) {
         response.code = 1;
         response.data = await consultar(null, include);
         return response;
     }
 
-    const { id, estadoId, comercioId } = req.query;
+    const { id, estadoId, comercioId,municipioId } = req.query;
     let query = {};
     if (estadoId) {
         let estados = estadoId.split(';');
@@ -139,6 +139,9 @@ list = async (req, isPublico) => {
     }
     if (comercioId) {
         query.comercioId = comercioId;
+    }
+    if(municipioId){
+        query.municipioId=municipioId;
     }
 
     if (!id) {

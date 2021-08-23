@@ -47,9 +47,19 @@ const listarSucursales = (req, res, next) => {
         .catch(next);
 }
 
+const listarComerciosPorMunicipio = (req, res, next) => {
+    
+    controller.getComerciosMunicipio(req)
+        .then((data) => {
+            response.success(req, res, data, 200);
+        })
+        .catch(next);
+}
+
 router.post('/',uploadFiles.array('files'), registrar);
 router.get('/deptos', listarDepartamentos);
 router.get('/muns', listarMunicipios);
-router.get('/comers', listarComercios);
+// router.get('/comers', listarComercios);
 router.get('/sucurs', listarSucursales);
+router.get('/comers', listarComerciosPorMunicipio);
 module.exports = router;

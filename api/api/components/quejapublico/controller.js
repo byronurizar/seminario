@@ -224,9 +224,27 @@ const EnviarCorreo = async (sucursal, queja, adjuntos = []) => {
     html = html.replace("{contenidoQueja}", htmlContenido);
     const configuracion = await getConfiguracionEmail();
     configuracion.adjuntos = adjuntos || [];
-    configuracion.cc=correo;
+    configuracion.cc = correo;
     const resultEmail = await Correo.sendMail(configuracion, correoSucursal, "Registro de Queja", null, html);
 }
+const getComerciosMunicipio = async (req) => {
+    let response = {};
+    let { municipioId } = req.query;
+    if (municipioId) {
+        let items = await Comercio.findAll({
+            attributes: ['comercioId', 'nombre', 'razon_social'],
+            where: sequelize.literal(`cat_comercio.comercioId in (select comercioId from cat_sucursal where cat_sucursal.municipioId=${municipioId} and cat_sucursal.estadoId=1) and cat_comercio.estadoId=1`),
+        });
+        response.code = 1;
+        response.data = items;
+        return response;
+    } else {
+        response.code = 0;
+        response.data = `Debe de seleccionar el municipio en donde esta el comercio al cual quiere agregar una queja`;
+        return response;
+    }
+}
 module.exports = {
-    insert
+    insert,
+    getComerciosMunicipio
 }
