@@ -7,14 +7,6 @@ module.exports = (sequelize, type) => {
                 primaryKey: true,
                 autoIncrement: true,
             },
-            sede_diacoId: {
-                type: type.INTEGER,
-                allowNull: false,
-                references: {
-                    model: "cat_sede_diaco",
-                    key: "sede_diacoId",
-                }
-            },
             sucursalId: {
                 type: type.INTEGER,
                 allowNull: false,

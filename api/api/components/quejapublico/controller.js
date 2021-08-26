@@ -6,7 +6,8 @@ const { Queja, Sucursal, SedeDiaco, Comercio, Municipio, Departamento, Parametro
 const Correo = require('../../../utils/EnviarCorreo');
 let { html } = require('../../../utils/plantillasCorreo/RegistroQueja');
 var sequelize = require("sequelize");
-const pathArchivo = __dirname + "../../../public/adjunto/";
+const pathArchivo = __dirname + "/../../../public/adjunto/";
+
 const urlArchivos = pathArchivo;
 const insert = async (req) => {
     let transaction;
@@ -18,17 +19,17 @@ const insert = async (req) => {
     try {
         transaction = await Queja.sequelize.transaction();
         let {
-            sede_diacoId=1,
+            sede_diacoId = 1,
             sucursalId,
             num_documento = '',
             fecha_documento = undefined,
             descripcion = '',
             solicitud = ''
         } = infoRequest;
-        if(String(fecha_documento).length<8){
-            fecha_documento==undefined;
+
+        if (String(fecha_documento).trim().length < 8) {
+            fecha_documento = undefined;
         }
-        console.log(infoRequest);
 
         let textoMinimoDescripcion = 1;
         let textoMinimoSolicitud = 1;
@@ -75,7 +76,7 @@ const insert = async (req) => {
                 let { quejaId } = result;
                 if (Number(quejaId) > 0) {
                     if (files.length > 0) {
-                        let totalItems = files.length - 1;
+                        let totalItems = files.length;
                         let contador = 0;
                         for await (let img of files) {
                             const { buffer, size, originalname, mimetype } = img;
@@ -87,7 +88,7 @@ const insert = async (req) => {
 
                             adjuntos.push({
                                 path: urlItem,
-                                nombre: "Adjunto No." + contador + 1,
+                                nombre: `Adjunto No. ${contador}`,
                                 mimetype
                             });
 
@@ -97,13 +98,14 @@ const insert = async (req) => {
                                 blob: buffer
                             }
                             let resultMedia = await Media.create(datosMedia, { transaction });
-                            let { mediaId } = resultMedia;
+                            let { mediaId = 0 } = resultMedia;
                             if (mediaId <= 0) {
                                 await transaction.rollback();
                                 response.code = -1;
                                 response.data = `Ocurrió un error al intentar registrar la queja, por favor llame al Call Center`;
                                 return response;
                             }
+                            contador++;
                         }
                         if (totalItems !== contador) {
                             await transaction.rollback();
@@ -116,7 +118,7 @@ const insert = async (req) => {
                     await transaction.commit();
                     EnviarCorreo(sucursalNombre, result, adjuntos);
                     response.code = 1;
-                    response.data = result;
+                    response.data ="Queja registrada exitosamente";
                     return response;
                 } else {
                     response.code = 0;

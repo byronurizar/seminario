@@ -4,25 +4,28 @@ import logoDark from './../../../assets/images/logoDiaco.jpg'
 import { ValidationForm, TextInput, SelectGroup } from 'react-bootstrap4-form-validation';
 import { Link } from 'react-router-dom';
 import { Col, Form } from 'react-bootstrap';
-import { alert_exitoso, alert_warning } from '../../../helpers/Notificacion';
+import { alert_error, alert_exitoso, alert_warning } from '../../../helpers/Notificacion';
 import callApi from '../../../helpers/conectorApi';
 import Loading from './Loading';
 import { DropzoneComponent } from 'react-dropzone-component';
 import { useForm } from '../../hooks/useForm';
 import { useEffect } from 'react';
+import withReactContent from 'sweetalert2-react-content';
+import Swal from 'sweetalert2';
 import config from '../../../config';
 const BASE_URL = config.urlApi;
+const dataInicial={
+    departamentoId: '',
+    municipioId: '',
+    comercioId: '',
+    sucursalId: '',
+    num_documento: '',
+    fecha_documento: '',
+    descripcion: '',
+    solicitud: ''
+};
 export const QuejaInsert = ({ history }) => {
-    const [values, handleOnChange] = useForm({
-        departamentoId: '',
-        municipioId: '',
-        comercioId: '',
-        sucursalId: '',
-        num_documento: '',
-        fecha_documento: '',
-        descripcion: '',
-        solicitud: ''
-    });
+    const [values, handleOnChange,,setValues] = useForm(dataInicial);
     const [catRegiones, setRegiones] = useState([]);
     const [email, setEmail] = useState('');
     const [departamentos, setDepartamentos] = useState([]);
@@ -53,11 +56,12 @@ export const QuejaInsert = ({ history }) => {
         data.append("datos", JSON.stringify(values));
 
         let contador=1;
-        console.log({file});
+        if(file){
         for await (let item of file) {
             data.append("files", item,`img_${contador}`);
             contador++;
         }
+    }
 
         const url = BASE_URL + "queja";
         let options = {};
@@ -67,11 +71,38 @@ export const QuejaInsert = ({ history }) => {
         try {
             const response = await fetch(url, options);
             const result = await response.json();
+            setLoading(false);
+            if (result) {
+                const { error, status, body } = result;
+                if (error === true) {
+                    if (body === "Validation error") {
+                        mostrarMensaje("Ocurrió un error de validación","error");
+                    } else {
+                        mostrarMensaje("Ocurrió un error al intentar registrar la queja","error");
+                    }
+                } else {
+                    if (body) {
+                        const { code, data } = body;
+                        if (code === 0) {
+                            mostrarMensaje(data,"warning");
+                        } else if (code === 1) {
+                            setValues(dataInicial);
+                            mostrarMensaje(data,"success");
+                        } else {
+                            mostrarMensaje(data,"error");
+                        }
+                    } else {
+                        mostrarMensaje("El servicio no retorno información","error");
+                    }
+                }
+            } else {
+                mostrarMensaje("Ocurrió un error al realizar la acción","error");
+            }
         } catch (error) {
-
+            mostrarMensaje("Ocurrió un error en la aplicación","error");
         }
 
-        setLoading(false);
+        
     }
 
     const GetRegiones = async () => {
@@ -134,8 +165,18 @@ export const QuejaInsert = ({ history }) => {
         if (values?.comercioId > 0 && values?.municipioId > 0) {
             GetSucursalesComercio(values.comercioId, values.municipioId);
         }
-    }, [values]);
+    }, [values.comercioId]);
 
+    const mostrarMensaje=(mensaje,tipoAlerta)=>{
+            const MySwal = withReactContent(Swal);
+            MySwal.fire({
+                title: 'Información!',
+                text: mensaje,
+                type:tipoAlerta,
+                showCloseButton: true,
+                showCancelButton: false
+            });
+    }
     const errorMessage = "Campo obligatorio";
     return (
         <Aux>
@@ -148,7 +189,9 @@ export const QuejaInsert = ({ history }) => {
                                 loading === true ?
                                     <Loading />
                                     : <>
+                                    <div className="d-flex justify-content-center">
                                         <img src={logoDark} alt="" className="img-fluid mb-4" />
+                                        </div>
                                         <h4 className="mb-3 f-w-400">Por favor complete toda la información solicitada por el formulario</h4>
                                         <hr></hr>
                                         <ValidationForm onSubmit={handleOnSubmit} onErrorSubmit={handleErrorSubmit}>
@@ -289,7 +332,7 @@ export const QuejaInsert = ({ history }) => {
                                                 </Form.Group>
                                             </Form.Row>
                                             <hr></hr>
-                                            <h6 className="mb-3 f-w-400">Adjuntar imágenes</h6>
+                                            <h6 className="mb-3 f-w-400">Adjuntar imágenes (opcional)</h6>
                                             <Form.Row>
                                                 <Form.Group as={Col} md="12">
                                                     <DropzoneComponent config={config} eventHandlers={eventHandlers} djsConfig={djsConfig} />
