@@ -18,13 +18,17 @@ const insert = async (req) => {
     try {
         transaction = await Queja.sequelize.transaction();
         let {
-            sede_diacoId,
+            sede_diacoId=1,
             sucursalId,
             num_documento = '',
             fecha_documento = undefined,
             descripcion = '',
             solicitud = ''
         } = infoRequest;
+        if(String(fecha_documento).length<8){
+            fecha_documento==undefined;
+        }
+        console.log(infoRequest);
 
         let textoMinimoDescripcion = 1;
         let textoMinimoSolicitud = 1;

@@ -7,11 +7,21 @@ import { Col, Form } from 'react-bootstrap';
 import { alert_exitoso, alert_warning } from '../../../helpers/Notificacion';
 import callApi from '../../../helpers/conectorApi';
 import Loading from './Loading';
+import { DropzoneComponent } from 'react-dropzone-component';
 import { useForm } from '../../hooks/useForm';
 import { useEffect } from 'react';
+import config from '../../../config';
+const BASE_URL = config.urlApi;
 export const QuejaInsert = ({ history }) => {
     const [values, handleOnChange] = useForm({
-
+        departamentoId: '',
+        municipioId: '',
+        comercioId: '',
+        sucursalId: '',
+        num_documento: '',
+        fecha_documento: '',
+        descripcion: '',
+        solicitud: ''
     });
     const [catRegiones, setRegiones] = useState([]);
     const [email, setEmail] = useState('');
@@ -19,21 +29,48 @@ export const QuejaInsert = ({ history }) => {
     const [listMunicipio, setListMunicipio] = useState([]);
     const [listComerciosXMunicipio, setListComerciosXMunicipio] = useState([]);
     const [listSucursalesComercio, setListSucursalesComercio] = useState([]);
-    
+    const [file, setFile] = useState(null);
+
+    const config = {
+        iconFiletypes: ['.jpg', '.png', '.jpeg'],
+        showFiletypeIcon: true,
+        postUrl: '/'
+    };
+
+    const djsConfig = {
+        addRemoveLinks: true,
+        acceptedFiles: "image/jpeg,image/png"
+    };
+    var eventHandlers = { addedfiles: (files) => setFile(files) }
+
+    console.log({file});
     const [loading, setLoading] = useState(false)
     const handleOnSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
-        let response = await callApi('resetpassword', {
-            method: 'POST',
-            body: JSON.stringify({ email })
-        });
+        const data = new FormData();
 
-        if (response) {
-            alert_exitoso(response);
-            setEmail('');
-            history.replace("/auth/login");
+        data.append("datos", JSON.stringify(values));
+
+        let contador=1;
+        console.log({file});
+        for await (let item of file) {
+            data.append("files", item,`img_${contador}`);
+            contador++;
         }
+
+        const url = BASE_URL + "queja";
+        let options = {};
+        options.method = 'POST';
+        options.body = data;
+
+        try {
+            const response = await fetch(url, options);
+            const result = await response.json();
+        } catch (error) {
+
+        }
+
         setLoading(false);
     }
 
@@ -63,7 +100,7 @@ export const QuejaInsert = ({ history }) => {
         }
     }
 
-    const GetSucursalesComercio = async (comercioId,municipioId) => {
+    const GetSucursalesComercio = async (comercioId, municipioId) => {
         let response = await callApi(`queja/sucurs?comercioId=${comercioId}&municipioId=${municipioId}&estadoId=1`);
         if (response) {
             setListSucursalesComercio(response);
@@ -94,8 +131,8 @@ export const QuejaInsert = ({ history }) => {
     }, [values.municipioId]);
 
     useEffect(() => {
-        if (values?.comercioId > 0 && values?.municipioId>0) {
-            GetSucursalesComercio(values.comercioId,values.municipioId);
+        if (values?.comercioId > 0 && values?.municipioId > 0) {
+            GetSucursalesComercio(values.comercioId, values.municipioId);
         }
     }, [values]);
 
@@ -113,6 +150,7 @@ export const QuejaInsert = ({ history }) => {
                                     : <>
                                         <img src={logoDark} alt="" className="img-fluid mb-4" />
                                         <h4 className="mb-3 f-w-400">Por favor complete toda la información solicitada por el formulario</h4>
+                                        <hr></hr>
                                         <ValidationForm onSubmit={handleOnSubmit} onErrorSubmit={handleErrorSubmit}>
                                             <Form.Row>
                                                 <Form.Group as={Col} md="6">
@@ -170,7 +208,7 @@ export const QuejaInsert = ({ history }) => {
                                                         }
                                                     </SelectGroup>
                                                 </Form.Group>
-                                            <Form.Group as={Col} md="6">
+                                                <Form.Group as={Col} md="6">
                                                     <Form.Label htmlFor="sucursalId">Sucursal</Form.Label>
                                                     <SelectGroup
                                                         name="sucursalId"
@@ -188,8 +226,75 @@ export const QuejaInsert = ({ history }) => {
                                                         }
                                                     </SelectGroup>
                                                 </Form.Group>
+                                                <Form.Group as={Col} md="6">
+                                                    <Form.Label htmlFor="num_documento">Número de Factura</Form.Label>
+                                                    <TextInput
+                                                        name="num_documento"
+                                                        id="num_documento"
+                                                        value={values.num_documento}
+                                                        onChange={handleOnChange}
+                                                        errorMessage={errorMessage}
+                                                        placeholder="Número de Factura"
+                                                        autoComplete="off"
+                                                        type="text"
+                                                    />
+                                                </Form.Group>
+                                                <div className="col-md-6">
+                                                    <div className="form-group col">
+                                                        <label className="form-label">Fecha de Factura</label>
+                                                        <input
+                                                            type="date"
+                                                            id="fecha_documento"
+                                                            name="fecha_documento"
+                                                            value={values.fecha_documento}
+                                                            onChange={handleOnChange}
+                                                            className="form-control" />
+                                                    </div>
+                                                </div>
                                             </Form.Row>
-
+                                            <Form.Row>
+                                                <Form.Group as={Col} md="12">
+                                                    <Form.Label htmlFor="descripcion">Descripción</Form.Label>
+                                                    <TextInput
+                                                        name="descripcion"
+                                                        id="descripcion"
+                                                        required
+                                                        multiline
+                                                        value={values.descripcion}
+                                                        onChange={handleOnChange}
+                                                        errorMessage={errorMessage}
+                                                        placeholder="Descripción"
+                                                        autoComplete="off"
+                                                        rows="3"
+                                                        minLength="50"
+                                                    />
+                                                </Form.Group>
+                                            </Form.Row>
+                                            <Form.Row>
+                                                <Form.Group as={Col} md="12">
+                                                    <Form.Label htmlFor="solicitud">Solicita</Form.Label>
+                                                    <TextInput
+                                                        name="solicitud"
+                                                        id="solicitud"
+                                                        required
+                                                        multiline
+                                                        value={values.solicitud}
+                                                        onChange={handleOnChange}
+                                                        errorMessage={errorMessage}
+                                                        placeholder="Solicitud"
+                                                        autoComplete="off"
+                                                        rows="3"
+                                                        minLength="50"
+                                                    />
+                                                </Form.Group>
+                                            </Form.Row>
+                                            <hr></hr>
+                                            <h6 className="mb-3 f-w-400">Adjuntar imágenes</h6>
+                                            <Form.Row>
+                                                <Form.Group as={Col} md="12">
+                                                    <DropzoneComponent config={config} eventHandlers={eventHandlers} djsConfig={djsConfig} />
+                                                </Form.Group>
+                                            </Form.Row>
                                             <hr></hr>
                                             <Form.Row>
                                                 <Form.Group as={Col} md="6">
