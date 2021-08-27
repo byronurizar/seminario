@@ -37,8 +37,9 @@ const SedeDiaco = require('./components/sedediaco/network');
 const Comercio = require('./components/comercio/network');
 const Sucursal = require('./components/sucursal/network');
 const EstadoQueja = require('./components/estadoqueja/network');
-const Queja = require('./components/quejapublico/network');
+const QuejaPublico = require('./components/quejapublico/network');
 const UsuarioSedeDiaco = require('./components/usuariosedediaco/network');
+const Queja = require('./components/queja/network');
 //Estratgia de json web token
 require('../auth/strategies/jwt');
 
@@ -77,7 +78,8 @@ app.use('/api/comercio', passport.authenticate('jwt', { session: false }), Comer
 app.use('/api/sucursal', passport.authenticate('jwt', { session: false }), Sucursal);
 app.use('/api/estadoqueja', passport.authenticate('jwt', { session: false }), EstadoQueja);
 app.use('/api/usuario/sedediaco', passport.authenticate('jwt', { session: false }), UsuarioSedeDiaco);
-app.use('/api/queja', Queja);
+app.use('/api/queja', QuejaPublico);
+app.use('/api/quejaadmin', passport.authenticate('jwt', { session: false }), Queja);
 //Es muy importante que sea el ultimo middelware
 app.use(errors);
 

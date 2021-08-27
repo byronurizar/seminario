@@ -383,6 +383,7 @@ Queja.belongsTo(EstadoQueja, {
   onDelete: "CASCADE",
 });
 
+
 Media.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
@@ -426,7 +427,7 @@ try {
   }).then(() => {
     const { Estados, Generos, Personas, Usuarios, Regiones, Departamentos, Municipios, Menus, Accesos,
       MenuAccesos, TiposDocumentos, Roles, MenuAccesosRol, TiposTelefonos, EstadosCiviles, TiposSangre,
-      UsuarioRoles, Parametros, listSedesDiaco, listEstadoQueja, listComercios, listSucursales } = require('./data');
+      UsuarioRoles, Parametros, listSedesDiaco, listEstadoQueja, listComercios, listSucursales, listaQuejas } = require('./data');
     confiBd.query("select count(*) as total from cat_estado", {
       type: QueryTypes.SELECT
     }).then(async (resultado) => {
@@ -453,6 +454,7 @@ try {
         await EstadoQueja.bulkCreate(listEstadoQueja);
         await Comercio.bulkCreate(listComercios);
         await Sucursal.bulkCreate(listSucursales);
+        await Queja.bulkCreate(listaQuejas);
       }
     });
   });

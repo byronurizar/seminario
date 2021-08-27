@@ -2848,6 +2848,19 @@ const Menus = [
     usuario_crea: 1,
     fecha_crea: Date.now()
   },
+  {
+    menuId: 36,
+    posicion: 19,
+    descripcion: "Listado Quejas",
+    href: "/base/catalogo/listadoquejas",
+    icono: "",
+    classes: "nav-item",
+    type: "item",
+    menu_padreId: 22,
+    visible: true,
+    usuario_crea: 1,
+    fecha_crea: Date.now()
+  },
 ];
 
 const MenuAccesos = [
@@ -3595,7 +3608,7 @@ const Usuarios = [
     personaId: 1,
     user_name: "BLOPEZ",
     password: bcrypt.hashSync('blopez', 10),
-    forzar_cambio_password:0
+    forzar_cambio_password: 0
   }
 ];
 
@@ -6430,6 +6443,11 @@ const listComercios = [
   }
 ];
 
+const totalQuejasSucursal = 10;
+const listaQuejas = [];
+const textoQuejda = "Se registro una queja con datos de prueba para cargar en la db";
+const textoSolicitud = "Se solicita que se implemente";
+
 const generarSucursales = () => {
   let sucursales = [];
   let sucursalId = 1;
@@ -6446,28 +6464,44 @@ const generarSucursales = () => {
       let direccion = `${nombreMunicipio}, ${nombreDepartamento}, ${nombreRegion}, GUATEMALA`;
       let telefono = getNumeroRandom(30000000, 59999999);
       let existeSucursal = sucursales.filter(itemSuc => Number(itemSuc.comercioId) === Number(comercio.comercioId) && Number(itemSuc.municipioId) === Number(municipioId));
-      if(existeSucursal.length>0){
-        nombreSucursal=`${nombreSucursal} No.${existeSucursal.length+1}`;
+      if (existeSucursal.length > 0) {
+        nombreSucursal = `${nombreSucursal} No.${existeSucursal.length + 1}`;
       }
-        sucursales.push({
-          sucursalId,
-          comercioId: comercio.comercioId,
-          nombre: nombreSucursal,
-          municipioId,
-          direccion,
-          telefono,
-          correo: 'blopezu@miumg.edu.gt',
-          usuario_crea: 1
+      sucursales.push({
+        sucursalId,
+        comercioId: comercio.comercioId,
+        nombre: nombreSucursal,
+        municipioId,
+        direccion,
+        telefono,
+        correo: 'blopezu@miumg.edu.gt',
+        usuario_crea: 1
+      });
+      sucursalId += 1;
+
+    }
+  }
+
+  if (totalQuejasSucursal > 0) {
+    let contador = 1;
+    for (let item of sucursales) {
+      for (let i = 0; i < totalQuejasSucursal; i++) {
+        listaQuejas.push({
+          quejaId: contador,
+          sucursalId: item.sucursalId,
+          descripcion: textoQuejda,
+          solicitud: textoSolicitud
         });
-        sucursalId += 1;
-      
+        contador++;
+      }
     }
   }
 
   return sucursales;
 };
 
-function getNumeroRandom(min, max) {
+
+const getNumeroRandom = (min, max) => {
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
@@ -6493,5 +6527,6 @@ module.exports = {
   listSedesDiaco,
   listEstadoQueja,
   listComercios,
-  listSucursales: generarSucursales()
+  listSucursales: generarSucursales(),
+  listaQuejas
 }

@@ -27,7 +27,6 @@ const dataInicial={
 export const QuejaInsert = ({ history }) => {
     const [values, handleOnChange,,setValues] = useForm(dataInicial);
     const [catRegiones, setRegiones] = useState([]);
-    const [email, setEmail] = useState('');
     const [departamentos, setDepartamentos] = useState([]);
     const [listMunicipio, setListMunicipio] = useState([]);
     const [listComerciosXMunicipio, setListComerciosXMunicipio] = useState([]);

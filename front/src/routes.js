@@ -25,6 +25,7 @@ const infoUser = React.lazy(() => import('./App/pages/InformacionUsuario'));
 const noEncontrado = React.lazy(() => import('./App/pages/NoEncontradoPage'));
 const sedeDiaco = React.lazy(() => import('./App/pages/SedeDiacoPage'));
 const comercio = React.lazy(() => import('./App/pages/ComercioPage'));
+const quejaAdmin = React.lazy(() => import('./App/pages/QuejaAdminPage'));
 const routes = [
     { path: '/base/home', exact: true, name: 'Inicio', component: home },
     { path: '/base/catalogo/region', exact: true, name: 'Region', component: region },
@@ -47,6 +48,7 @@ const routes = [
     { path: '/base/infouser', exact: true, name: 'infouser', component: infoUser },
     { path: '/base/catalogo/sedediaco', exact: true, name: 'SedeDiaco', component: sedeDiaco },
     { path: '/base/catalogo/comercio', exact: true, name: 'Comercio', component: comercio },
+    { path: '/base/catalogo/listadoquejas', exact: true, name: 'Quejas', component: quejaAdmin },
     { name: 'noEncontrado', component: noEncontrado }
 ];
 
