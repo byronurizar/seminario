@@ -53,7 +53,6 @@ const SucursalModel = require('./models/cat_sucursal');
 const EstadoQuejaModel = require('./models/cat_estado_queja');
 const QuejaModel = require('./models/queja');
 const MediaModel = require('./models/media');
-const SedeDiacoDepartamentoModel = require('./models/sede_diaco_departamento');
 const UsuarioSedeDiacoModel = require('./models/usuario_sede_diaco');
 
 
@@ -89,7 +88,6 @@ const Sucursal = SucursalModel(confiBd, Sequelize);
 const EstadoQueja = EstadoQuejaModel(confiBd, Sequelize);
 const Queja = QuejaModel(confiBd, Sequelize);
 const Media = MediaModel(confiBd, Sequelize);
-const SedeDiacoDepartamento = SedeDiacoDepartamentoModel(confiBd, Sequelize);
 const UsuarioSedeDiaco = UsuarioSedeDiacoModel(confiBd, Sequelize);
 
 
@@ -391,18 +389,6 @@ Media.belongsTo(Estado, {
   onDelete: "CASCADE",
 });
 
-SedeDiacoDepartamento.belongsTo(Departamento, {
-  as: "Departamento",
-  foreignKey: "departamentoId",
-  onDelete: "CASCADE",
-});
-
-SedeDiacoDepartamento.belongsTo(Estado, {
-  as: "Estado",
-  foreignKey: "estadoId",
-  onDelete: "CASCADE",
-});
-
 UsuarioSedeDiaco.belongsTo(Estado, {
   as: "Estado",
   foreignKey: "estadoId",
@@ -414,6 +400,13 @@ UsuarioSedeDiaco.belongsTo(Usuario, {
   foreignKey: "usuarioId",
   onDelete: "CASCADE",
 });
+
+UsuarioSedeDiaco.belongsTo(SedeDiaco, {
+  as: "SedeDiaco",
+  foreignKey: "sede_diacoId",
+  onDelete: "CASCADE",
+});
+
 
 BitacoraCambios.belongsTo(Usuario, {
   as: "Usuario",
@@ -500,7 +493,6 @@ module.exports = {
   EstadoQueja,
   Queja,
   Media,
-  SedeDiacoDepartamento,
   UsuarioSedeDiaco,
   bd: confiBd
 }

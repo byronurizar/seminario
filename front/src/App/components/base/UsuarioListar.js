@@ -12,19 +12,24 @@ import { UsuarioRol } from './UsuarioRol';
 import { NoAutorizado } from './NoAutorizado';
 import Loading from './Loading';
 import { asignarEstiloTabla, limpiarEstiloTabla } from '../../../helpers/estiloTabla';
+import { UsuarioSedeDiaco } from './UsuarioSedeDiaco';
 const menuId = 17;
 const menuIdRol = 11;
 const menuIdPersona = 12;
 const menuIdUsuarioRol = 18;
+const menuIdUsuarioSedeDiaco = 35;
+const menuIdSedeDiaco = 29;
 export const UsuarioListar = () => {
     const state = useSelector(state => state);
     const [loading, setLoading] = useState(true)
     const [accesos, setAccesos] = useState([]);
     const [abrirModal, setAbrirModal] = useState(false);
     const [abrirModalUsuarioRol, setAbrirModalUsuarioRol] = useState(false);
+    const [abrirModalUsuarioSedeDiaco, setAbrirModalUsuarioSedeDiaco] = useState(false);
     const [usuarios, setUsuarios] = useState([]);
     const [personas, setPersonas] = useState([]);
     const [catRol, setCatRol] = useState([]);
+    const [listSedesDiaco, setListSedesDiaco] = useState([]);
     const initData = {
         personaId: '',
         user_name: '',
@@ -38,7 +43,7 @@ export const UsuarioListar = () => {
     const GetAccesosByMenuId = () => {
         if (state?.accesos) {
             const { accesos } = state;
-            const misAccesos = accesos.filter(item => item.menuId === menuId || item.menuId === menuIdRol || item.menuId === menuIdPersona || item.menuId === menuIdUsuarioRol);
+            const misAccesos = accesos.filter(item => item.menuId === menuId || item.menuId === menuIdRol || item.menuId === menuIdPersona || item.menuId === menuIdUsuarioRol || item.menuId === menuIdUsuarioSedeDiaco || item.menuId === menuIdSedeDiaco);
             setAccesos(misAccesos);
         }
         setLoading(false);
@@ -121,6 +126,14 @@ export const UsuarioListar = () => {
         setAbrirModalUsuarioRol(true);
     }
 
+    const handleUsuarioSede = (id) => {
+        let { usuarioId } = usuarios.find(item => item.usuarioId === id);
+        setdataInicial({
+            usuarioId
+        });
+        setAbrirModalUsuarioSedeDiaco(true);
+    }
+
 
     const GetCatRol = async () => {
         if (accesos.find(acceso => acceso.menuId === menuIdRol && acceso.accesoId === 3)) {
@@ -132,6 +145,18 @@ export const UsuarioListar = () => {
         }
         setLoading(false);
     }
+
+    const GetListSedesDiacio = async () => {
+        if (accesos.find(acceso => acceso.menuId === menuIdSedeDiaco && acceso.accesoId === 3)) {
+            setLoading(true);
+            let response = await callApi('sedediaco?estadoId=1&include=0');
+            if (response) {
+                setListSedesDiaco(response);
+            }
+        }
+        setLoading(false);
+    }
+
     const handleCanbioPass = (id) => {
         let { usuarioId } = usuarios.find(item => item.usuarioId === id);
         setdataInicial({
@@ -169,13 +194,19 @@ export const UsuarioListar = () => {
 
     useEffect(() => {
         GetAccesosByMenuId();
-    }, [state?.accesos]);
+    }, []);
+
+    useEffect(() => {
+        GetAccesosByMenuId();
+    }, [abrirModalUsuarioRol]);
 
     useEffect(() => {
         GetUsuarios();
         GetPersonas();
         GetCatRol();
+        GetListSedesDiacio();
     }, [accesos]);
+
     return (
         accesos.length > 0 &&
         <Aux>
@@ -214,6 +245,10 @@ export const UsuarioListar = () => {
                                                             {
                                                                 accesos.find(acceso => acceso.menuId === menuIdUsuarioRol && acceso.accesoId === 3) &&
                                                                 <th>Perfiles</th>
+                                                            }
+                                                            {
+                                                                accesos.find(acceso => acceso.menuId === menuIdUsuarioSedeDiaco && acceso.accesoId === 3) &&
+                                                                <th>Sedes</th>
                                                             }
                                                             <th>Cambio Contraseña</th>
                                                             {
@@ -260,6 +295,12 @@ export const UsuarioListar = () => {
                                                                             </td>
                                                                         }
                                                                         {
+                                                                            accesos.find(acceso => acceso.menuId === menuIdUsuarioSedeDiaco && acceso.accesoId === 3) &&
+                                                                            <td style={{ textAlign: "center" }}>
+                                                                                <button className="btn-icon btn btn-success btn-sm" onClick={() => { handleUsuarioSede(usuarioId) }}><i className="feather icon-settings" /></button>
+                                                                            </td>
+                                                                        }
+                                                                        {
                                                                             accesos.find(acceso => (acceso.menuId === menuId && acceso.accesoId === 2) || (acceso.menuId === menuId && acceso.accesoId === 4)) &&
                                                                             <>
                                                                                 {
@@ -297,6 +338,10 @@ export const UsuarioListar = () => {
                             {
                                 abrirModalUsuarioRol === true &&
                                 <UsuarioRol abrirModal={abrirModalUsuarioRol} setAbrirModal={setAbrirModalUsuarioRol} catRol={catRol} usuarioId={dataInicial.usuarioId} />
+                            }
+                            {
+                                abrirModalUsuarioSedeDiaco === true &&
+                                <UsuarioSedeDiaco abrirModal={abrirModalUsuarioSedeDiaco} setAbrirModal={setAbrirModalUsuarioSedeDiaco} listSedesDiaco={listSedesDiaco} usuarioId={dataInicial.usuarioId} />
                             }
                         </Card.Body>
                     </Card>

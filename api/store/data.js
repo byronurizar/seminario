@@ -2835,6 +2835,19 @@ const Menus = [
     usuario_crea: 1,
     fecha_crea: Date.now()
   },
+  {
+    menuId: 35,
+    posicion: 18,
+    descripcion: "Usuario Sede Diaco",
+    href: "",
+    icono: "",
+    classes: "nav-item",
+    type: "item",
+    menu_padreId: 23,
+    visible: false,
+    usuario_crea: 1,
+    fecha_crea: Date.now()
+  },
 ];
 
 const MenuAccesos = [
