@@ -19,8 +19,8 @@ const actualizar = (req, res, next) => {
         .catch(next);
 }
 
-const listReporte = (req, res, next) => {
-    controller.listReporte(req)
+const listCombos = (req, res, next) => {
+    controller.listCombos(req)
         .then((data) => {
             response.success(req, res, data, 200);
         })
@@ -28,6 +28,6 @@ const listReporte = (req, res, next) => {
 }
 router.get('/', listar);
 router.put('/',actualizar);
-router.get('/:id',listReporte);
+router.get('/:id',listCombos);
 
 module.exports = router;

@@ -1,109 +1,137 @@
+var sequelize = require("sequelize");
 const moment = require('moment');
-const { Queja,Municipio, EstadoQueja, Departamento, Sucursal } = require('../../../store/db');
+const { Queja, Municipio, EstadoQueja, Departamento, Sucursal, Comercio } = require('../../../store/db');
 const { registrarBitacora } = require('../../../utils/bitacora_cambios');
 const { validarpermiso } = require('../../../auth');
 const MenuId = 18;
 const Modelo = Queja;
 const tabla = 'queja';
 
-const consultar = async (query, include = 1) => {
-    if (include == 1) {
-        if (query) {
-            return await Modelo.findAll({
-                include: [{
-                    model: EstadoQueja,
-                    as: "Estado",
-                    required: true,
-                    attributes: ['descripcion'],
-                },
-                {
-                    model: Sucursal,
-                    as: "Sucursal",
-                    required: true,
-                    attributes: ['nombre','municipioId']
-                }],
-                where: [query],
-                order: [
-                    ['quejaId', 'ASC']
-                ]
-            });
-        } else {
-            return await Modelo.findAll({
-                include: [{
-                    model: EstadoQueja,
-                    as: "Estado",
-                    required: true,
-                    attributes: ['descripcion'],
-                },
-                {
-                    model: Sucursal,
-                    as: "Sucursal",
-                    required: true,
-                    attributes: ['nombre','municipioId']
-                }],
-                order: [
-                    ['quejaId', 'ASC']
-                ]
-            });
-        }
-    } else {
-        if (query) {
-            return await Modelo.findAll({ where: query });
-        } else {
-            return await Modelo.findAll();
-        }
-    }
-}
-
 list = async (req) => {
     let response = {};
-        let autorizado = await validarpermiso(req, MenuId, 3);
-        if (autorizado !== true) {
-            return autorizado;
+    let autorizado = await validarpermiso(req, MenuId, 3);
+    if (autorizado !== true) {
+        return autorizado;
+    }
+    let { usuarioId } = req.user;
+    let data = await Queja.findAll({
+        include: [{
+            model: Sucursal,
+            as: "Sucursal",
+            required: true,
+            attributes: ['comercioId', 'nombre'],
+            where: { estadoId: 1 },
+            include: [{
+                model: Comercio,
+                as: "Comercio",
+                required: true,
+                attributes: ['razon_social'],
+            },
+            {
+                model: Municipio,
+                as: "Municipio",
+                required: true,
+                attributes: ['descripcion'],
+                where: { estadoId: 1 },
+                include: [{
+                    model: Departamento,
+                    as: "Departamento",
+                    required: true,
+                    attributes: ['descripcion'],
+                    where: { estadoId: 1 },
+                }],
+                where: sequelize.literal(`departamentoId in(
+                    select auxMunicipio.departamentoId from cat_sede_diaco auxSede 
+                    inner join cat_municipio auxMunicipio 
+                    on auxSede.municipioId=auxMunicipio.municipioId
+                    where auxSede.sede_diacoId in(
+                    select sede_diacoId from usuario_sede_diaco where usuarioId=${usuarioId} and estadoId=1
+                    ) and auxSede.estadoId=1 and auxMunicipio.estadoId=1
+                    )`)
+            }
+            ]
         }
-    const { include } = req.query;
-    if (!req.query.id && !req.query.estadoId && !req.query.departamentoId) {
-        response.code = 1;
-        response.data = await await consultar(null, include);
-        return response;
-    }
+        ],
 
-    const { id, estadoId, departamentoId } = req.query;
-    let query = {};
-    if (estadoId) {
-        let estados = estadoId.split(';');
-        let arrayEstado = new Array();
-        estados.map((item) => {
-            arrayEstado.push(Number(item));
-        });
-        query.estadoId = arrayEstado;
-    }
-
-    if (departamentoId) {
-        query.departamentoId = departamentoId;
-    }
-    if (!id) {
-        response.code = 1;
-        response.data = await consultar(query, include);
-        return response;
-    } else {
-        if (Number(id) > 0) {
-            query.quejaId = Number(id);
-            response.code = 1;
-            response.data = await consultar(query, include);
-            return response;
-        } else {
-            response.code = -1;
-            response.data = "Debe de especificar un codigo";
-            return response;
-        }
-    }
+        order: [
+            ['fecha_crea', 'ASC']
+        ]
+    });
+    response.code = 1;
+    response.data = data;
+    return response;
+}
+const listDepartamentos = async (usuarioId) => {
+    return await Departamento.findAll({
+        attributes: ['departamentoId', 'descripcion'],
+        where: sequelize.literal(`departamentoId in(
+            select departamentoId from cat_sede_diaco a
+            inner join cat_municipio b
+            on a.municipioId=b.municipioId and b.estadoId=1 and a.estadoId=1
+            inner join usuario_sede_diaco c
+            on a.sede_diacoId=c.sede_diacoId and c.estadoId=1
+            where c.usuarioId=${usuarioId}
+            ) and estadoId=1`)
+    });
 }
 
-const listReporte=async(req)=>{
+const listComerciosDepto = async (departamentoId) => {
+    return await Comercio.findAll({
+        attributes: ['comercioId', 'nombre'],
+        where: sequelize.literal(`comercioId in(
+            select comercioId from cat_sucursal a
+            inner join cat_municipio b
+            on a.municipioId=b.municipioId and a.estadoId=1 and b.estadoId=1
+            where b.departamentoId=${departamentoId}
+        )`)
+    });
+}
+
+const listSucursales = async (comercioId) => {
+    return await Sucursal.findAll({
+        include: [
+            {
+                model: Municipio,
+                as: "Municipio",
+                required: true,
+                attributes: ['descripcion'],
+                where: { estadoId: 1 }
+            }
+        ],
+        attributes: ['sucursalId', 'nombre'],
+        where: { comercioId, estadoId: 1 }
+    });
+}
+
+
+
+const listCombos = async (req) => {
     let response = {};
-    response.code="-1";
-    return response;
+    let autorizado = await validarpermiso(req, MenuId, 3);
+    if (autorizado !== true) {
+        return autorizado;
+    }
+    let { usuarioId } = req.user;
+    let { id } = req.params;
+    let { dId, cId } = req.query;
+    switch (String(id).trim().toUpperCase()) {
+        case "DEPTOS":
+            response.code = 1;
+            response.data = await listDepartamentos(usuarioId);
+            return response;
+        case "COMERS":
+            response.code = 1;
+            response.data = await listComerciosDepto(dId);
+            return response;
+        case "SUCURS":
+            response.code = 1;
+            response.data = await listSucursales(cId);
+            return response;
+        default:
+            response.code = 0;
+            response.data = "Opción inválida";
+            return response;
+    }
 }
 const update = async (req) => {
     let response = {};
@@ -158,5 +186,5 @@ const update = async (req) => {
 module.exports = {
     list,
     update,
-    listReporte
+    listCombos
 }
