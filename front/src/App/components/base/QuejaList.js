@@ -109,266 +109,8 @@ export const QuejaList = () => {
                             </nav>
                         </Card.Body>
                     </Card>
-                    <div className="ticket-block">
-                        <Row className="row">
-                            <Col sm='auto'>
-                                <img className="media-object wid-60 img-radius" src={avatar1} alt="Generic placeholder" />
-                            </Col>
-                            <div className="col">
-                                <div className="card hd-body" onClick={() => setstate({ isOpen: true })}>
-                                    <div className="row align-items-center">
-                                        <div className="col border-right pr-0">
-                                            <div className="card-body inner-center">
-                                                <div className="ticket-customer font-weight-bold">John lui</div>
-                                                <div className="ticket-type-icon private mt-1 mb-1"><i className="feather icon-lock mr-1 f-14" />theme customisation issue</div>
-                                                <ul className="list-inline mt-2 mb-0">
-                                                    <li className="list-inline-item"><img src={p1} alt="" className="wid-20 rounded mr-1 img-fluid" />Piaf able</li>
-                                                    <li className="list-inline-item"><img src={avatar5} alt="" className="wid-20 rounded mr-1 img-fluid" />Assigned to Robert alia</li>
-                                                    <li className="list-inline-item"><i className="feather icon-calendar mr-1 f-14" />Updated 22 hours ago</li>
-                                                    <li className="list-inline-item"><i className="feather icon-message-square mr-1 f-14" />9</li>
-                                                </ul>
-                                                <div className="excerpt mt-4">
-                                                    <h6><img src={avatar5} alt="" className="wid-20 avatar mr-2 rounded" />Last comment from <a href={DEMO.BLANK_LINK}>Robert alia:</a></h6>
-                                                    <p>hello John lui, you need to create "toolbar-options" div only once in a page&nbsp;in your code, this div fill found every "td" tag in your page, just remove those things. and
-                                                        also in option
-                                                        button add</p>
-                                                </div>
-                                                <div className="mt-2">
-                                                    <a href={DEMO.BLANK_LINK} className="mr-3 text-muted"><i className="feather icon-eye mr-1" />View Ticket</a>
-                                                    <a href={DEMO.BLANK_LINK} className="text-danger"><i className="feather icon-trash-2 mr-1" />Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-auto pl-0 right-icon">
-                                            <div className="card-body">
-                                                <ul className="list-unstyled mb-0">
-                                                    <li><a href={DEMO.BLANK_LINK} data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top" className="active"><i className="feather icon-star text-warning" /></a></li>
-                                                    <li><a href={DEMO.BLANK_LINK} data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top"><i className="feather icon-circle text-muted" /></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div className="col-auto hover-blk position-absolute shadow-sm rounded">
-                                            <div className="card-body p-0 pt-2">
-                                                <div className="img-txt">
-                                                    <img src={avatar1} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                                    <p>You replied</p>
-                                                </div>
-                                                <p>hello Yogen dra,you need to create "toolbar-options" div only once in a page in your code, this div fill found every "td"...</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Row>
-                    </div>
-                    <div className="ticket-block">
-                        <Row className="row">
-                            <Col sm='auto'>
-                                <img className="media-object wid-60 img-radius" src={avatar4} alt="Generic placeholder" />
-                            </Col>
-                            <div className="col">
-                                <div className="card hd-body" onClick={() => setstate({ isOpen: true })}>
-                                    <div className="row align-items-center">
-                                        <div className="col border-right pr-0">
-                                            <div className="card-body inner-center">
-                                                <div className="ticket-customer font-weight-bold">John lui</div>
-                                                <div className="ticket-type-icon private mt-1 mb-1"><i className="feather icon-lock mr-1 f-14" />theme customisation issue</div>
-                                                <ul className="list-inline mt-2 mb-0">
-                                                    <li className="list-inline-item"><img src={p2} alt="" className="wid-20 rounded mr-1 img-fluid" />Piaf able</li>
-                                                    <li className="list-inline-item"><img src={avatar5} alt="" className="wid-20 rounded mr-1 img-fluid" />Assigned to Robert alia</li>
-                                                    <li className="list-inline-item"><i className="feather icon-calendar mr-1 f-14" />Updated 22 hours ago</li>
-                                                    <li className="list-inline-item"><i className="feather icon-message-square mr-1 f-14" />9</li>
-                                                </ul>
-                                                <div className="excerpt mt-4">
-                                                    <h6><img src={avatar5} alt="" className="wid-20 avatar mr-2 rounded" />Last comment from <a href={DEMO.BLANK_LINK}>Robert alia:</a></h6>
-                                                    <p>hello John lui, you need to create "toolbar-options" div only once in a page&nbsp;in your code, this div fill found every "td" tag in your page, just remove those things. and
-                                                        also in option
-                                                        button add</p>
-                                                </div>
-                                                <div className="mt-2">
-                                                    <a href={DEMO.BLANK_LINK} className="mr-3 text-muted"><i className="feather icon-eye mr-1" />View Ticket</a>
-                                                    <a href={DEMO.BLANK_LINK} className="text-danger"><i className="feather icon-trash-2 mr-1" />Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-auto pl-0 right-icon">
-                                            <div className="card-body">
-                                                <ul className="list-unstyled mb-0">
-                                                    <li><a href={DEMO.BLANK_LINK} data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top" className="active"><i className="feather icon-star text-warning" /></a></li>
-                                                    <li><a href={DEMO.BLANK_LINK} data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top"><i className="feather icon-circle text-muted" /></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div className="col-auto hover-blk position-absolute shadow-sm rounded">
-                                            <div className="card-body p-0 pt-2">
-                                                <div className="img-txt">
-                                                    <img src={avatar1} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                                    <p>You replied</p>
-                                                </div>
-                                                <p>hello Yogen dra,you need to create "toolbar-options" div only once in a page in your code, this div fill found every "td"...</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Row>
-                    </div>
-                    <div className="ticket-block">
-                        <Row className="row">
-                            <Col sm='auto'>
-                                <img className="media-object wid-60 img-radius" src={avatar3} alt="Generic placeholder" />
-                            </Col>
-                            <div className="col">
-                                <div className="card hd-body" onClick={() => setstate({ isOpen: true })}>
-                                    <div className="row align-items-center">
-                                        <div className="col border-right pr-0">
-                                            <div className="card-body inner-center">
-                                                <div className="ticket-customer font-weight-bold">John lui</div>
-                                                <div className="ticket-type-icon private mt-1 mb-1"><i className="feather icon-lock mr-1 f-14" />theme customisation issue</div>
-                                                <ul className="list-inline mt-2 mb-0">
-                                                    <li className="list-inline-item"><img src={p3} alt="" className="wid-20 rounded mr-1 img-fluid" />Piaf able</li>
-                                                    <li className="list-inline-item"><img src={avatar5} alt="" className="wid-20 rounded mr-1 img-fluid" />Assigned to Robert alia</li>
-                                                    <li className="list-inline-item"><i className="feather icon-calendar mr-1 f-14" />Updated 22 hours ago</li>
-                                                    <li className="list-inline-item"><i className="feather icon-message-square mr-1 f-14" />9</li>
-                                                </ul>
-                                                <div className="excerpt mt-4">
-                                                    <h6><img src={avatar5} alt="" className="wid-20 avatar mr-2 rounded" />Last comment from <a href={DEMO.BLANK_LINK}>Robert alia:</a></h6>
-                                                    <p>hello John lui, you need to create "toolbar-options" div only once in a page&nbsp;in your code, this div fill found every "td" tag in your page, just remove those things. and
-                                                        also in option
-                                                        button add</p>
-                                                </div>
-                                                <div className="mt-2">
-                                                    <a href={DEMO.BLANK_LINK} className="mr-3 text-muted"><i className="feather icon-eye mr-1" />View Ticket</a>
-                                                    <a href={DEMO.BLANK_LINK} className="text-danger"><i className="feather icon-trash-2 mr-1" />Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-auto pl-0 right-icon">
-                                            <div className="card-body">
-                                                <ul className="list-unstyled mb-0">
-                                                    <li><a href={DEMO.BLANK_LINK} data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top" className="active"><i className="feather icon-star text-warning" /></a></li>
-                                                    <li><a href={DEMO.BLANK_LINK} data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top"><i className="feather icon-circle text-muted" /></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div className="col-auto hover-blk position-absolute shadow-sm rounded">
-                                            <div className="card-body p-0 pt-2">
-                                                <div className="img-txt">
-                                                    <img src={avatar1} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                                    <p>You replied</p>
-                                                </div>
-                                                <p>hello Yogen dra,you need to create "toolbar-options" div only once in a page in your code, this div fill found every "td"...</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Row>
-                    </div>
-                    <div className="ticket-block open-tic">
-                        <Row className="row">
-                            <Col sm='auto'>
-                                <img className="media-object wid-60 img-radius" src={avatar4} alt="Generic placeholder" />
-                            </Col>
-                            <div className="col">
-                                <div className="card hd-body" onClick={() => setstate({ isOpen: true })}>
-                                    <div className="row align-items-center">
-                                        <div className="col border-right pr-0">
-                                            <div className="card-body inner-center">
-                                                <div className="ticket-customer font-weight-bold">John lui</div>
-                                                <div className="ticket-type-icon private mt-1 mb-1"><i className="feather icon-lock mr-1 f-14" />theme customisation issue</div>
-                                                <ul className="list-inline mt-2 mb-0">
-                                                    <li className="list-inline-item"><img src={p4} alt="" className="wid-20 rounded mr-1 img-fluid" />Piaf able</li>
-                                                    <li className="list-inline-item"><img src={avatar5} alt="" className="wid-20 rounded mr-1 img-fluid" />Assigned to Robert alia</li>
-                                                    <li className="list-inline-item"><i className="feather icon-calendar mr-1 f-14" />Updated 22 hours ago</li>
-                                                    <li className="list-inline-item"><i className="feather icon-message-square mr-1 f-14" />9</li>
-                                                </ul>
-                                                <div className="excerpt mt-4">
-                                                    <h6><img src={avatar5} alt="" className="wid-20 avatar mr-2 rounded" />Last comment from <a href={DEMO.BLANK_LINK}>Robert alia:</a></h6>
-                                                    <p>hello John lui, you need to create "toolbar-options" div only once in a page&nbsp;in your code, this div fill found every "td" tag in your page, just remove those things. and
-                                                        also in option
-                                                        button add</p>
-                                                </div>
-                                                <div className="mt-2">
-                                                    <a href={DEMO.BLANK_LINK} className="mr-3 text-muted"><i className="feather icon-eye mr-1" />View Ticket</a>
-                                                    <a href={DEMO.BLANK_LINK} className="text-danger"><i className="feather icon-trash-2 mr-1" />Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-auto pl-0 right-icon">
-                                            <div className="card-body">
-                                                <ul className="list-unstyled mb-0">
-                                                    <li><a href={DEMO.BLANK_LINK} data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top" className="active"><i className="feather icon-star text-warning" /></a></li>
-                                                    <li><a href={DEMO.BLANK_LINK} data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top"><i className="feather icon-circle text-muted" /></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div className="col-auto hover-blk position-absolute shadow-sm rounded">
-                                            <div className="card-body p-0 pt-2">
-                                                <div className="img-txt">
-                                                    <img src={avatar1} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                                    <p>You replied</p>
-                                                </div>
-                                                <p>hello Yogen dra,you need to create "toolbar-options" div only once in a page in your code, this div fill found every "td"...</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Row>
-                    </div>
-                    <div className="ticket-block">
-                        <Row className="row">
-                            <Col sm='auto'>
-                                <img className="media-object wid-60 img-radius" src={avatar2} alt="Generic placeholder" />
-                            </Col>
-                            <div className="col">
-                                <div className="card hd-body" onClick={() => setstate({ isOpen: true })}>
-                                    <div className="row align-items-center">
-                                        <div className="col border-right pr-0">
-                                            <div className="card-body inner-center">
-                                                <div className="ticket-customer font-weight-bold">John lui</div>
-                                                <div className="ticket-type-icon private mt-1 mb-1"><i className="feather icon-lock mr-1 f-14" />theme customisation issue</div>
-                                                <ul className="list-inline mt-2 mb-0">
-                                                    <li className="list-inline-item"><img src={p5} alt="" className="wid-20 rounded mr-1 img-fluid" />Piaf able</li>
-                                                    <li className="list-inline-item"><img src={avatar5} alt="" className="wid-20 rounded mr-1 img-fluid" />Assigned to Robert alia</li>
-                                                    <li className="list-inline-item"><i className="feather icon-calendar mr-1 f-14" />Updated 22 hours ago</li>
-                                                    <li className="list-inline-item"><i className="feather icon-message-square mr-1 f-14" />9</li>
-                                                </ul>
-                                                <div className="excerpt mt-4">
-                                                    <h6><img src={avatar5} alt="" className="wid-20 avatar mr-2 rounded" />Last comment from <a href={DEMO.BLANK_LINK}>Robert alia:</a></h6>
-                                                    <p>hello John lui, you need to create "toolbar-options" div only once in a page&nbsp;in your code, this div fill found every "td" tag in your page, just remove those things. and
-                                                        also in option
-                                                        button add</p>
-                                                </div>
-                                                <div className="mt-2">
-                                                    <a href={DEMO.BLANK_LINK} className="mr-3 text-muted"><i className="feather icon-eye mr-1" />View Ticket</a>
-                                                    <a href={DEMO.BLANK_LINK} className="text-danger"><i className="feather icon-trash-2 mr-1" />Delete</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-auto pl-0 right-icon">
-                                            <div className="card-body">
-                                                <ul className="list-unstyled mb-0">
-                                                    <li><a href={DEMO.BLANK_LINK} data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top" className="active"><i className="feather icon-star text-warning" /></a></li>
-                                                    <li><a href={DEMO.BLANK_LINK} data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top"><i className="feather icon-circle text-muted" /></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div className="col-auto hover-blk position-absolute shadow-sm rounded">
-                                            <div className="card-body p-0 pt-2">
-                                                <div className="img-txt">
-                                                    <img src={avatar1} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                                    <p>You replied</p>
-                                                </div>
-                                                <p>hello Yogen dra,you need to create "toolbar-options" div only once in a page in your code, this div fill found every "td"...</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </Row>
-                    </div>
+
+
                     <div className="ticket-block close-tic">
                         <Row className="row">
                             <Col sm='auto'>
@@ -379,30 +121,24 @@ export const QuejaList = () => {
                                     <div className="row align-items-center">
                                         <div className="col border-right pr-0">
                                             <div className="card-body inner-center">
-                                                <div className="ticket-customer font-weight-bold">John lui</div>
-                                                <div className="ticket-type-icon private mt-1 mb-1"><i className="feather icon-lock mr-1 f-14" />theme customisation issue</div>
+                                                <div className="ticket-customer font-weight-bold">Anónimo</div>
                                                 <ul className="list-inline mt-2 mb-0">
-                                                    <li className="list-inline-item"><img src={p3} alt="" className="wid-20 rounded mr-1 img-fluid" />Piaf able</li>
-                                                    <li className="list-inline-item"><img src={avatar5} alt="" className="wid-20 rounded mr-1 img-fluid" />Assigned to Robert alia</li>
-                                                    <li className="list-inline-item"><i className="feather icon-calendar mr-1 f-14" />Updated 22 hours ago</li>
-                                                    <li className="list-inline-item"><i className="feather icon-message-square mr-1 f-14" />9</li>
+                                                    <li className="list-inline-item"><img src={avatar5} alt="" className="wid-20 rounded mr-1 img-fluid" />Byron López Urizar</li>
+                                                    <li className="list-inline-item"><i className="feather icon-calendar mr-1 f-14" />08/07/2021 8:00</li>
+                                                    <li className="list-inline-item"><i className="feather icon-message-square mr-1 f-14" />0</li>
                                                 </ul>
                                                 <div className="excerpt mt-4">
-                                                    <h6><img src={avatar5} alt="" className="wid-20 avatar mr-2 rounded" />Last comment from <a href={DEMO.BLANK_LINK}>Robert alia:</a></h6>
-                                                    <p>hello John lui, you need to create "toolbar-options" div only once in a page&nbsp;in your code, this div fill found every "td" tag in your page, just remove those things. and
-                                                        also in option
-                                                        button add</p>
+                                                    <h6><img src={avatar5} alt="" className="wid-20 avatar mr-2 rounded" />Queja</h6>
+                                                    <p>El día lunes estuve en el restaurante de pollo campero y lamentablemente la comida estaba en mal estado, por lo que decidí hablar con el gerente, pero este se nego a hablar con mi persona</p>
                                                 </div>
                                                 <div className="mt-2">
-                                                    <a href={DEMO.BLANK_LINK} className="mr-3 text-muted"><i className="feather icon-eye mr-1" />View Ticket</a>
-                                                    <a href={DEMO.BLANK_LINK} className="text-danger"><i className="feather icon-trash-2 mr-1" />Delete</a>
+                                                    <a href={DEMO.BLANK_LINK} className="mr-3 text-muted"><i className="feather icon-eye mr-1" />Ver Detalles</a>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="col-auto pl-0 right-icon">
                                             <div className="card-body">
                                                 <ul className="list-unstyled mb-0">
-                                                    <li><a href={DEMO.BLANK_LINK} data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top" className="active"><i className="feather icon-star text-warning" /></a></li>
                                                     <li><a href={DEMO.BLANK_LINK} data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top"><i className="feather icon-circle text-muted" /></a></li>
                                                 </ul>
                                             </div>
@@ -411,9 +147,9 @@ export const QuejaList = () => {
                                             <div className="card-body p-0 pt-2">
                                                 <div className="img-txt">
                                                     <img src={avatar1} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                                    <p>You replied</p>
+                                                    <p>Observaciones</p>
                                                 </div>
-                                                <p>hello Yogen dra,you need to create "toolbar-options" div only once in a page in your code, this div fill found every "td"...</p>
+                                                <p>Observaciones de la queja que se realizo</p>
                                             </div>
                                         </div>
                                     </div>
@@ -421,12 +157,21 @@ export const QuejaList = () => {
                             </div>
                         </Row>
                     </div>
-                </Col>
+
+
+
+
+                    
+                  
+
+
+                  
+               </Col>
                 <Col xl={4} lg={12}>
                     <div className="right-side">
                         <Card className="mb-3">
                             <Card.Header className="card-header">
-                                <h5>Ticket Categories</h5>
+                                <h5>Total de Quejas</h5>
                             </Card.Header>
                             <Card.Body className="p-3">
                                 <div className="cat-list">
@@ -482,7 +227,7 @@ export const QuejaList = () => {
                         </Card>
                         <Card>
                             <Card.Header className="pt-4 pb-4">
-                                <h5>Support Agent</h5>
+                                <h5>Quejas por departamento</h5>
                             </Card.Header>
                             <Card.Body className="p-3">
                                 <div className="cat-list">
@@ -539,11 +284,14 @@ export const QuejaList = () => {
                     </div>
                 </Col>
             </Row>
+
+
+
             <div className={state.isOpen ? queViewActive : queView}>
                 <div className="overlay" onClick={() => setstate({ isOpen: false })} />
                 <div className="content">
                     <Card.Body>
-                        <h4>Chrome bug The page uses a roller to slide under a black block<span className="badge badge-danger text-uppercase ml-2 f-12">Private</span></h4>
+                        <h4>Dar solución a queja<span className="badge badge-danger text-uppercase ml-2 f-12">Private</span></h4>
                         <div className="border-bottom pb-3 pt-3">
                             <div className="row">
                                 <div className="col-md-7">
@@ -613,7 +361,7 @@ export const QuejaList = () => {
                                 </Col>
                                 <Col sm={12} className='mt-3'>
                                     <div className="comment-content">
-                                        <p>hello John lui,</p>
+                                        <p>hello Anónimo,</p>
                                         <p>you need to create <strong>"toolbar-options" div only once</strong> in a page in your code, this div fill found
                                             <strong>every "td"</strong> tag in your page, just remove those things.
                                         </p>
@@ -642,7 +390,7 @@ export const QuejaList = () => {
                                 </Col>
                                 <Col sm={12} className='mt-3'>
                                     <div className="comment-content">
-                                        <p>hello John lui,</p>
+                                        <p>hello Anónimo,</p>
                                         <p>you need to create <strong>"toolbar-options" div only once</strong> in a page in your code, this div fill found
                                             <strong>every "td"</strong> tag in your page, just remove those things.
                                         </p>
@@ -678,7 +426,7 @@ export const QuejaList = () => {
                                 </Col>
                                 <Col sm={12} className='mt-3'>
                                     <div className="comment-content">
-                                        <p>hello John lui,</p>
+                                        <p>hello Anónimo,</p>
                                         <p>you need to create <strong>"toolbar-options" div only once</strong> in a page in your code, this div fill found
                                             <strong>every "td"</strong> tag in your page, just remove those things.
                                         </p>

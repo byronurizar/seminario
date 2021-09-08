@@ -4,8 +4,8 @@ import { Col, Form } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import './../../../assets/scss/style.scss';
 import Aux from '../../../hoc/_Aux';
-import authLogo from './../../../assets/images/auth/auth-logo.png'
-import authLogoDark from './../../../assets/images/auth/auth-logo-dark.png'
+import authLogo from './../../../assets/images/logoDiaco.jpg'
+import authLogoDark from './../../../assets/images/logoDiaco.jpg'
 import { loginBackend } from '../../../actions/auth';
 import { useForm } from '../../hooks/useForm';
 import { ValidationForm, TextInput } from 'react-bootstrap4-form-validation';
@@ -48,10 +48,10 @@ const Login = ({ history, location }) => {
     useEffect(() => {
         validarLogin();
     }, [logged]);
-    window.history.pushState(null, "", window.location.href);
-    window.onpopstate = function () {
-        window.history.pushState(null, "", window.location.href);
-    };
+    // window.history.pushState(null, "", window.location.href);
+    // window.onpopstate = function () {
+    //     window.history.pushState(null, "", window.location.href);
+    // };
     useEffect(() => {
         validarSesion();
     }, [])
@@ -62,9 +62,9 @@ const Login = ({ history, location }) => {
                     <div className="flex-grow-1">
                         <div className="h-100 d-md-flex align-items-center auth-side-img">
                             <div className="col-sm-10 auth-content w-auto">
-                                <img src={authLogo} alt="" className="img-fluid" />
-                                <h1 className="text-white my-4">Bienvenido Nombre de la empresa</h1>
-                                <h4 className="text-white font-weight-normal">Inicie sesión con su cuenta y explore el sistema</h4>
+                                {/* <img src={authLogo} alt="" className="img-fluid" /> */}
+                                <h1 className="text-black my-4">Sistema Administrativo DIACO</h1>
+                                <h4 className="text-black font-weight-normal">Inicie sesión con su cuenta y explore el sistema</h4>
                             </div>
                         </div>
                         <div className="auth-side-form">
