@@ -9,10 +9,10 @@ module.exports = {
     secret: process.env.JWT_SECRET || "Yahk9Lev5lBdANo6UPQuIgCVHinXsm8M",
   },
   bd: {
-    database: "dbDemo",
+    database: "dbseminario",
     username: "root",
     password: "Blopez$1991",
-    host: "localhost",
+    host: "34.134.59.25",
     dialect: "mysql",
     port: 3306,
     pool: {
