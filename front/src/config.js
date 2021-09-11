@@ -10,6 +10,6 @@ export default {
     navFixedLayout: true,
     headerFixedLayout: false,
     boxLayout: false,
-    urlApi: 'http://apiseminario.natalysshop.com/api/',//urlApi: 'http://127.0.0.1:3100/api/',
+    urlApi: 'http://apiblu.natalysshop.com/api/',//urlApi: 'http://127.0.0.1:3100/api/',
     dias_alerta_cambio_pass: 10,
 };
