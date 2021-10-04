@@ -30,6 +30,7 @@ export const RolMenuAccesoListar = ({ idrol }) => {
         estadoId: 1
     };
 
+    console.log(initData);
     const GetAccesosByMenuId = () => {
         if (state?.accesos) {
             const { accesos } = state;
@@ -89,7 +90,7 @@ export const RolMenuAccesoListar = ({ idrol }) => {
         setLoading(false);
     }
     const handleEditar = (id) => {
-        const { rol_menu_accesoId, rolId, menu_accesoId, estadoId, MenuAcceso: { menuId } } = rolMenuAcceso.find(item => item.rol_menu_accesoId === id);
+        const { rol_menu_accesoId, rolId, menu_accesoId, estadoId, MenuAcceso: { menuId } } = rolMenuAcceso.find(item => item.rol_menu_accesoId === id && Number(item.rolId)===Number(initData.rolId));
         setdataInicial({
             rol_menu_accesoId,
             menu_accesoId,

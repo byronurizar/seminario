@@ -19,15 +19,23 @@ const actualizar = (req, res, next) => {
         .catch(next);
 }
 
-const listCombos = (req, res, next) => {
-    controller.listCombos(req)
+const listItems = (req, res, next) => {
+    controller.listItems(req)
         .then((data) => {
             response.success(req, res, data, 200);
         })
         .catch(next);
 }
-router.get('/', listar);
+const listInfo = (req, res, next) => {
+    controller.listInfo(req)
+        .then((data) => {
+            response.success(req, res, data, 200);
+        })
+        .catch(next);
+}
+router.post('/list', listar);
 router.put('/',actualizar);
-router.get('/:id',listCombos);
+router.get('/:id',listItems);
+router.get('/info/:id',listInfo)
 
 module.exports = router;

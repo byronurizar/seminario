@@ -88,7 +88,7 @@ export const RolMenuAccesoUpSert = ({ dataInicial, abrirModal, catMenu, handleUp
         if (accesos.find(acceso => acceso.menuId === menuIdMenuAcceso && acceso.accesoId === 3)) {
             setLoading(true);
             if (menuId != 0) {
-                let response = await callApi(`rolmenuacceso?menuId=${menuId}`);
+                let response = await callApi(`rolmenuacceso?menuId=${menuId}&rolId=${dataInicial.rolId}`);
                 if (response) {
                     setListAsignados(response);
                 }

@@ -377,6 +377,13 @@ Queja.belongsTo(Sucursal, {
   onDelete: "CASCADE",
 });
 
+
+Queja.belongsTo(Usuario, {
+  as: "Usuario",
+  foreignKey: "usuario_ult_mod",
+  onDelete: "CASCADE",
+});
+
 Queja.belongsTo(EstadoQueja, {
   as: "Estado",
   foreignKey: "estado_quejaId",
@@ -407,6 +414,13 @@ UsuarioSedeDiaco.belongsTo(SedeDiaco, {
   foreignKey: "sede_diacoId",
   onDelete: "CASCADE",
 });
+
+Queja.hasMany(Media, {
+  as: "Media",
+  foreignKey: "quejaId",
+  onDelete: "CASCADE",
+});
+
 
 
 BitacoraCambios.belongsTo(Usuario, {

@@ -1,66 +1,222 @@
-import React from 'react';
-import {
-    Row,
-    Col,
-    Card,
-    Dropdown
-} from 'react-bootstrap';
-
+import React, { useEffect } from 'react';
+import { Row, Col, Card, Dropdown, Form } from 'react-bootstrap';
 import Aux from "./../../../hoc/_Aux";
-
-import 'jodit';
-import 'jodit/build/jodit.min.css';
-import JoditEditor from "jodit-react";
-
 import DEMO from "../../../store/constant";
-import Prism from "../../../App/components/Prism";
-
-import avatar1 from '../../../assets/images/user/avatar-1.jpg';
-import avatar2 from '../../../assets/images/user/avatar-2.jpg';
-import avatar3 from '../../../assets/images/user/avatar-3.jpg';
-import avatar4 from '../../../assets/images/user/avatar-4.jpg';
-import avatar5 from '../../../assets/images/user/avatar-5.jpg';
-
-import p1 from '../../../assets/images/ticket/p1.jpg';
-import p2 from '../../../assets/images/ticket/p2.jpg';
-import p3 from '../../../assets/images/ticket/p3.jpg';
-import p4 from '../../../assets/images/ticket/p4.jpg';
-import p5 from '../../../assets/images/ticket/p5.jpg';
-
-import image1 from '../../../assets/images/light-box/l1.jpg';
-import image2 from '../../../assets/images/light-box/l2.jpg';
-import image3 from '../../../assets/images/light-box/l3.jpg';
-import image4 from '../../../assets/images/light-box/l4.jpg';
-import image5 from '../../../assets/images/light-box/l5.jpg';
-import image6 from '../../../assets/images/light-box/l6.jpg';
-
-import thumb1 from '../../../assets/images/light-box/sl1.jpg';
-import thumb2 from '../../../assets/images/light-box/sl2.jpg';
-import thumb3 from '../../../assets/images/light-box/sl3.jpg';
-import thumb4 from '../../../assets/images/light-box/sl4.jpg';
-import thumb5 from '../../../assets/images/light-box/sl5.jpg';
-import thumb6 from '../../../assets/images/light-box/sl6.jpg';
+import Select from 'react-select';
 import Gallery from "../../../App/components/Gallery";
 import { useState } from 'react';
-import { useRef } from 'react';
+import callApi from '../../../helpers/conectorApi';
+import InfiniteScroll from "react-infinite-scroll-component";
+import Loading from './Loading';
+import { useForm } from '../../hooks/useForm';
+import moment from 'moment';
+import { ValidationForm, SelectGroup } from 'react-bootstrap4-form-validation';
+import { alert_warning, alert_exitoso } from '../../../helpers/Notificacion';
+import { useSelector } from 'react-redux';
+import { NoAutorizado } from './NoAutorizado';
+const menuId = 36;
 
 export const QuejaList = () => {
+
+    const stateRedux = useSelector(stateRedux => stateRedux);
+    const [accesos, setAccesos] = useState([]);
+    const [listQuejasDepto, setListQuejasDepto] = useState([]);
+    const [listQuejas, setListQuejas] = useState([]);
+    const [numPaginaActual, setNumPaginaActual] = useState(0);
+    const [numPagMax, setNumPagMax] = useState(0);
+    const [totalItems, setTotalItems] = useState(0);
+    const [totalItemsTodos, setTotalItemsTodos] = useState(0);
+    const [origenQuejas, setOrigenQuejas] = useState('Todos los departamentos');
+    const [infoItem, setInfoItem] = useState({});
+
+    const [listRegiones, setListRegiones] = useState([]);
+    const [listDepartamentos, setListDepartamentos] = useState([]);
+    const [listMunicipios, setListMunicipios] = useState([]);
+    const [listComercios, setListComercios] = useState([]);
+    const [listSucursales, setListSucursales] = useState([]);
+    const [adjuntosQueja, setAdjuntosQueja] = useState([]);
+
+    const [filtrosAvanzados, setFiltrosAvanzados] = useState(false);
+    const [editQueja, setEditQueja] = useState(false);
+    const [tipoBusqueda, setTipoBusqueda] = useState(0);
+    const [btnClickAvanzado, setBtnClickAvanzado] = useState(0);
+    const [btnClickXDepto, setBtnClickXDepto] = useState(0);
+
+    const [loadingInfo, setLoadingInfo] = useState(false);
+
+
+    const [values, handleOnChange, , setValues] = useForm({
+        tipoBusqueda,
+        fechaInicial: moment(new Date(new Date().getFullYear(), new Date().getMonth(), 1)).format('YYYY-MM-DD'),
+        fechaFinal: moment(new Date()).format('YYYY-MM-DD'),
+        departamentoId: 0,
+        regionId: 0,
+        municipioId: 0,
+        comercioId: 0,
+        sucursalId: 0,
+        estado_quejaId: 0
+    });
+
+    const [resultQueja, handleChangeRespues, , setValuesQueja] = useForm({
+        solucion: '',
+        observaciones: ''
+    });
+
+    const GetQuejasPorDepto = async () => {
+        if (accesos.find(acceso => Number(acceso.menuId) === menuId && acceso.accesoId === 3)) {
+            let response = await callApi('quejaadmin/quejasdepto');
+            if (response) {
+                setListQuejasDepto(response);
+            }
+        }
+    }
+
+    const GetAccesosByMenuId = () => {
+        if (stateRedux?.accesos) {
+            const { accesos } = stateRedux;
+            const misAccesos = accesos.filter(item => item.menuId === menuId);
+            setAccesos(misAccesos);
+        }
+    }
+
+
+    const GetCatalogo = async (parametro, parametro2 = 0) => {
+        if (accesos.find(acceso => Number(acceso.menuId) === menuId && acceso.accesoId === 3)) {
+            let response = {};
+            let items = [];
+            switch (parametro) {
+                case 'misregiones':
+                    response = await callApi(`quejaadmin/${parametro}`);
+                    if (response) {
+                        items = response || [];
+                        items.unshift({ value: 0, label: 'TODAS LAS REGIONES' });
+                        setListRegiones(items);
+                    }
+                    break;
+                case 'misdeptos':
+                    response = await callApi(`quejaadmin/${parametro}?regionId=${parametro2}`);
+                    if (response) {
+                        items = response || [];
+                        items.unshift({ value: 0, label: 'TODOS LOS DEPARTAMENTOS' });
+                        setListDepartamentos(items);
+                    }
+                    break;
+                case 'municipios':
+                    response = await callApi(`quejaadmin/${parametro}?departamentoId=${parametro2}`);
+                    if (response) {
+                        items = response || [];
+                        items.unshift({ value: 0, label: 'TODOS LOS MUNICIPIOS' });
+                        setListMunicipios(items);
+                    }
+                    break;
+                case 'comers':
+                    response = await callApi(`quejaadmin/${parametro}?departamentoId=${values.departamentoId}&municipioId=${values.municipioId}`);
+                    if (response) {
+                        items = response || [];
+                        items.unshift({ value: 0, label: 'TODOS LOS COMERCIOS' });
+                        setListComercios(items);
+                    }
+                    break;
+                case 'sucurs':
+                    response = await callApi(`quejaadmin/${parametro}?comercioId=${values.comercioId}&municipioId=${values.municipioId}`);
+                    if (response) {
+                        items = response || [];
+                        items.unshift({ value: 0, label: 'TODAS LAS SUCURSALES' });
+                        setListSucursales(items);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    }
+
+
+
+    const GetQuejas = async () => {
+        if (accesos.find(item => Number(item.menuId) === menuId && item.accesoId === 3)) {
+            if (Number(tipoBusqueda) === 0) {
+                let response = await callApi(`quejaadmin/list?tipoBusqueda=0&pagina=${numPaginaActual}`, {
+                    method: 'POST',
+                    body: JSON.stringify(values)
+                });
+                if (response) {
+                    let { count, rows } = response;
+                    setNumPagMax(count / 10);
+                    let items = listQuejas || [];
+                    items.push(...rows);
+                    setListQuejas(items);
+                    setTotalItems(count);
+                    setNumPaginaActual(numPaginaActual + 1);
+                }
+            } else if (Number(tipoBusqueda) === 1) {
+                let response = await callApi(`quejaadmin/list?tipoBusqueda=0&pagina=${numPaginaActual}`, {
+                    method: 'POST',
+                    body: JSON.stringify(values)
+                });
+                if (response) {
+                    let { count, rows = [] } = response;
+                    setNumPagMax(count / 10);
+                    let items = listQuejas || [];
+                    items.push(...rows);
+                    setListQuejas(items);
+                    setTotalItems(count);
+                    setNumPaginaActual(numPaginaActual + 1);
+                }
+
+            }
+        }
+    }
+    const hanldeClickDepto = (id, descripcion) => {
+        setFiltrosAvanzados(false);
+        setListQuejas([]);
+        setNumPaginaActual(0);
+        setValues({ ...values, tipoBusqueda: 0, departamentoId: id });
+        setOrigenQuejas(descripcion);
+        let actual = btnClickXDepto;
+        let nuevo = actual + 1;
+        setBtnClickXDepto(nuevo);
+    }
+
+    useEffect(() => {
+        GetQuejasPorDepto();
+        GetQuejas();
+    }, [accesos, btnClickXDepto])
+
+
+    const GetInfoQueja = async (id) => {
+        setLoadingInfo(true);
+        let response = await callApi(`quejaadmin/info/${id}`)
+        if (response) {
+            if (response?.Media) {
+                let itemsImages = response.Media.map(item => {
+                    let bufferBase64 = new Buffer(item.blob.data, "binary").toString("base64");
+                    return {
+                        src: "data:image/jpeg;base64," + bufferBase64,
+                        thumbnail: "data:image/jpeg;base64," + bufferBase64,
+                        caption: `Adjunto ${item.mediaId} ${item.fecha_crea}`,
+                        useForDemo: true
+                    }
+                });
+                setAdjuntosQueja(itemsImages);
+            }
+
+            setValuesQueja({ ...resultQueja, quejaId: response.quejaId, solucion: response.solucion, observaciones: response.observaciones, estado_quejaId: response.estado_quejaId, Usuario: response.Usuario });
+        }
+        setLoadingInfo(false);
+    }
+    const handleItemInfo = (item) => {
+        GetInfoQueja(item.quejaId);
+        setInfoItem(item);
+        setstate({ isOpen: true });
+        console.log(accesos);
+    }
+
     const [state, setstate] = useState({
         gridSize: 'large-view',
         isOpen: false
     });
-
-    const ref = useRef(null);
-
-    const updateContent = (value) => {
-        setstate({ content: value })
-    };
-
-    const content = 'Hello...';
-    const config = {
-        readonly: false
-    };
-
 
     const deskClass = ['btn-page', 'help-desk', state.gridSize];
     const gridDefault = 'btn waves-effect waves-light btn-primary';
@@ -69,381 +225,486 @@ export const QuejaList = () => {
     const queView = 'q-view';
     const queViewActive = 'q-view active';
 
-    const basicCode = (
-        `<div class="card">
-<div class="card-header">
-    <h5>Hello card</h5>
-    <span> lorem ipsum dolor sit amet, consectetur adipisicing elit</span>
-    <div class="card-header-right">
-        <i class="icofont icofont-rounded-down"/>
-        <i class="icofont icofont-refresh"/>
-        <i class="icofont icofont-close-circled"/>
-    </div>
-</div>
-<div class="card-block">
-    <p>
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-    </p>
-</div>
-</div>`);
+    useEffect(() => {
+        GetAccesosByMenuId();
+    }, []);
+
+    useEffect(() => {
+        GetCatalogo('misregiones');
+    }, [accesos]);
+
+    useEffect(() => {
+        if (accesos.find(i => Number(i.menuId) === Number(menuId) && Number(i.accesoId) === 2)) {
+            setEditQueja(true);
+        } else {
+            setEditQueja(false);
+        }
+    }, [accesos]);
+
+
+
+    useEffect(() => {
+        GetCatalogo('misdeptos', values.regionId);
+    }, [values.regionId]);
+
+    useEffect(() => {
+        GetCatalogo('municipios', values.departamentoId);
+    }, [values.departamentoId]);
+
+    useEffect(() => {
+        GetCatalogo('comers', values.departamentoId);
+    }, [values.departamentoId]);
+
+    useEffect(() => {
+        GetCatalogo('comers', values.departamentoId);
+    }, [values.municipioId]);
+
+    useEffect(() => {
+        GetCatalogo('sucurs', values.municipioId);
+    }, [values.municipioId]);
+
+
+    useEffect(() => {
+        GetCatalogo('sucurs', values.comercioId);
+    }, [values.comercioId]);
+
+    useEffect(() => {
+        GetQuejas();
+    }, [accesos]);
+
+    useEffect(() => {
+        if (filtrosAvanzados === true) {
+            setValues({ ...values, departamentoId: 0, tipoBusqueda: 1 });
+        } else {
+            setValues({ ...values, tipoBusqueda: 0 });
+        }
+    }, [filtrosAvanzados])
+
+    const handleRegionId = ({ value }) => {
+        setValues({ ...values, regionId: value });
+    }
+
+    const handleDepartamentoId = ({ value }) => {
+        setValues({ ...values, departamentoId: value });
+    }
+
+    const handleMunicipioId = ({ value }) => {
+        setValues({ ...values, municipioId: value });
+    }
+
+    const handleComercioId = ({ value }) => {
+        setValues({ ...values, comercioId: value });
+    }
+
+    const handleSucursalId = ({ value }) => {
+        setValues({ ...values, sucursalId: value });
+    }
+
+    const handleOnSubmit = async (e) => {
+        e.preventDefault();
+        setListQuejas([]);
+        setNumPaginaActual(0);
+        setOrigenQuejas("FILTRO AVANZADO");
+        let actual = btnClickAvanzado;
+        let nuevo = actual + 1;
+        setBtnClickAvanzado(nuevo)
+    }
+
+    useEffect(() => {
+        GetQuejas();
+    }, [btnClickAvanzado])
+
+    const handleErrorSubmit = (e, formData, errorInputs) => {
+        alert_warning("Por favor complete la información solicitada");
+    };
+
+    useEffect(() => {
+        if (listQuejasDepto.length > 0) {
+            let todos = listQuejasDepto.reduce((prev, cur) => Number(prev) + (Number(cur.total)), 0);
+            setTotalItemsTodos(todos);
+        }
+    }, [listQuejasDepto])
+
+    const UpdateQueja = async () => {
+        if (String(resultQueja.solucion).trim().length > 10) {
+            setLoadingInfo(true);
+            let response = await callApi(`quejaadmin`, {
+                method: 'PUT',
+                body: JSON.stringify(resultQueja)
+            });
+            if (response) {
+                alert_exitoso("Se actualizó la queja exitosamente");
+                setstate({ isOpen: false });
+            }
+            setLoadingInfo(false);
+        } else {
+            alert_warning("Se debe de agregar una descripción de la solución");
+        }
+    }
 
     return (
         <Aux>
-            <Row className={deskClass.join(' ')}>
-                <Col xl={8} lg={12}>
-                    <Card>
-                        <Card.Body>
-                            <nav className="navbar justify-content-between p-0 align-items-center">
-                                <h5>Listado de Quejas registradas en el sistema</h5>
-                                <div className="btn-group btn-group-toggle">
-                                    <label onClick={() => setstate({ gridSize: 'sm-view' })} className={state.gridSize === 'sm-view' ? gridActiveClass : gridDefault}>
-                                        <input type="radio" name="options" id="option1" defaultChecked={true} /> <i className="feather icon-align-justify m-0" />
-                                    </label>
-                                    <label onClick={() => setstate({ gridSize: 'md-view' })} className={state.gridSize === 'md-view' ? gridActiveClass : gridDefault}>
-                                        <input type="radio" name="options" id="option1" defaultChecked={true} /> <i className="feather icon-menu m-0" />
-                                    </label>
-                                    <label onClick={() => setstate({ gridSize: 'large-view' })} className={state.gridSize === 'large-view' ? gridActiveClass : gridDefault}>
-                                        <input type="radio" name="options" id="option1" defaultChecked={true} /> <i className="feather icon-grid m-0" />
-                                    </label>
+            {
+                accesos.find(item => Number(item.menuId) === menuId && item.accesoId === 3) ?
+                    <>
+                        <Row className={deskClass.join(' ')}>
+                            <Col xl={2} lg={12}>
+                                <div className="right-side">
+                                    <Card>
+                                        <Card.Header className="pt-4 pb-4">
+                                            <h5>Quejas por departamento</h5>
+                                        </Card.Header>
+                                        <Card.Body className="p-3">
+                                            <div className="cat-list">
+                                                <div className="border-bottom pb-3 " key={`depto_id${0}`} onClick={() => { hanldeClickDepto(0, "Todos los departamento") }}>
+                                                    <div className="d-inline-block">
+                                                        <a href={DEMO.BLANK_LINK}><i className="feather icon-edit" />TODOS</a>
+                                                    </div>
+                                                    <div className="float-right span-content">
+                                                        <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-info rounded-circle mr-1" data-toggle="tooltip" data-placement="top" title="Mostrar listado de quejas" data-original-title="tooltip on top">{totalItemsTodos}</a>
+                                                    </div>
+                                                </div>
+
+                                                {
+                                                    listQuejasDepto.map(({ departamentoId, departamento, total }, index) => {
+                                                        return (
+                                                            <div className="border-bottom pb-3 " key={`depto_id${departamentoId}`} onClick={() => { hanldeClickDepto(departamentoId, departamento) }}>
+                                                                <div className="d-inline-block">
+                                                                    <a href={DEMO.BLANK_LINK}><i className="feather icon-edit" /> {departamento}</a>
+                                                                </div>
+                                                                <div className="float-right span-content">
+                                                                    <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-info rounded-circle mr-1" data-toggle="tooltip" data-placement="top" title="Mostrar listado de quejas de este departamento" data-original-title="tooltip on top">{total}</a>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })
+
+                                                }
+                                            </div>
+                                        </Card.Body>
+                                    </Card>
                                 </div>
-                            </nav>
-                        </Card.Body>
-                    </Card>
-
-
-                    <div className="ticket-block close-tic">
-                        <Row className="row">
-                            <Col sm='auto'>
-                                <img className="media-object wid-60 img-radius" src={avatar1} alt="Generic placeholder" />
                             </Col>
-                            <div className="col">
-                                <div className="card hd-body" onClick={() => setstate({ isOpen: true })}>
-                                    <div className="row align-items-center">
-                                        <div className="col border-right pr-0">
-                                            <div className="card-body inner-center">
-                                                <div className="ticket-customer font-weight-bold">Anónimo</div>
-                                                <ul className="list-inline mt-2 mb-0">
-                                                    <li className="list-inline-item"><img src={avatar5} alt="" className="wid-20 rounded mr-1 img-fluid" />Byron López Urizar</li>
-                                                    <li className="list-inline-item"><i className="feather icon-calendar mr-1 f-14" />08/07/2021 8:00</li>
-                                                    <li className="list-inline-item"><i className="feather icon-message-square mr-1 f-14" />0</li>
-                                                </ul>
-                                                <div className="excerpt mt-4">
-                                                    <h6><img src={avatar5} alt="" className="wid-20 avatar mr-2 rounded" />Queja</h6>
-                                                    <p>El día lunes estuve en el restaurante de pollo campero y lamentablemente la comida estaba en mal estado, por lo que decidí hablar con el gerente, pero este se nego a hablar con mi persona</p>
-                                                </div>
-                                                <div className="mt-2">
-                                                    <a href={DEMO.BLANK_LINK} className="mr-3 text-muted"><i className="feather icon-eye mr-1" />Ver Detalles</a>
-                                                </div>
+                            <Col xl={10} lg={12}>
+                                <Card>
+                                    <Card.Body>
+
+                                        <nav className="navbar justify-content-between p-0 align-items-center">
+                                            <h5>Listado de Quejas registradas en el sistema</h5>
+                                            <div className="btn-group btn-group-toggle">
+                                                <label onClick={() => setstate({ gridSize: 'sm-view' })} className={state.gridSize === 'sm-view' ? gridActiveClass : gridDefault}>
+                                                    <input type="radio" name="options" id="option1" defaultChecked={true} /> <i className="feather icon-align-justify m-0" />
+                                                </label>
+                                                <label onClick={() => setstate({ gridSize: 'md-view' })} className={state.gridSize === 'md-view' ? gridActiveClass : gridDefault}>
+                                                    <input type="radio" name="options" id="option1" defaultChecked={true} /> <i className="feather icon-menu m-0" />
+                                                </label>
+                                                <label onClick={() => setstate({ gridSize: 'large-view' })} className={state.gridSize === 'large-view' ? gridActiveClass : gridDefault}>
+                                                    <input type="radio" name="options" id="option1" defaultChecked={true} /> <i className="feather icon-grid m-0" />
+                                                </label>
                                             </div>
+                                        </nav>
+                                        <hr />
+                                        <div className="text-center">
+                                            <span className="b-b-primary text-primary" style={{ cursor: 'pointer' }} onClick={() => { setFiltrosAvanzados(!filtrosAvanzados) }}>Filtros avanzados</span>
                                         </div>
-                                        <div className="col-auto pl-0 right-icon">
-                                            <div className="card-body">
-                                                <ul className="list-unstyled mb-0">
-                                                    <li><a href={DEMO.BLANK_LINK} data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top"><i className="feather icon-circle text-muted" /></a></li>
-                                                </ul>
-                                            </div>
-                                        </div>
-                                        <div className="col-auto hover-blk position-absolute shadow-sm rounded">
-                                            <div className="card-body p-0 pt-2">
-                                                <div className="img-txt">
-                                                    <img src={avatar1} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                                    <p>Observaciones</p>
+                                        {filtrosAvanzados === true &&
+                                            <ValidationForm onSubmit={handleOnSubmit} onErrorSubmit={handleErrorSubmit}>
+                                                <Form.Row>
+                                                    <Form.Group as={Col} md="4">
+                                                        <Form.Label htmlFor="regionId">Region</Form.Label>
+                                                        <Select
+                                                            id="regionId"
+                                                            name="regionId"
+                                                            className="basic-single"
+                                                            classNamePrefix="select"
+                                                            defaultValue={listRegiones.find(i => i.value === values.regionId)}
+                                                            required
+                                                            placeholder="Region"
+                                                            onChange={handleRegionId}
+                                                            options={listRegiones}
+                                                        />
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} md="4">
+                                                        <Form.Label htmlFor="departamentoId">Departamento</Form.Label>
+                                                        <Select
+                                                            id="departamentoId"
+                                                            name="departamentoId"
+                                                            className="basic-single"
+                                                            classNamePrefix="select"
+                                                            defaultValue={listDepartamentos.find(i => i.value === values.departamentoId)}
+                                                            required
+                                                            placeholder="Departamento"
+                                                            onChange={handleDepartamentoId}
+                                                            options={listDepartamentos}
+                                                        />
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} md="4">
+                                                        <Form.Label htmlFor="municipioId">Municipio</Form.Label>
+                                                        <Select
+                                                            id="municipioId"
+                                                            name="municipioId"
+                                                            className="basic-single"
+                                                            classNamePrefix="select"
+                                                            defaultValue={listMunicipios.find(i => i.value === values.municipioId)}
+                                                            required
+                                                            placeholder="Departamento"
+                                                            onChange={handleMunicipioId}
+                                                            options={listMunicipios}
+                                                        />
+                                                    </Form.Group>
+                                                </Form.Row>
+                                                <Form.Row>
+                                                    <Form.Group as={Col} md="6">
+                                                        <Form.Label htmlFor="comercioId">Comercio</Form.Label>
+                                                        <Select
+                                                            id="comercioId"
+                                                            name="comercioId"
+                                                            className="basic-single"
+                                                            classNamePrefix="select"
+                                                            defaultValue={listComercios.find(i => i.value === values.comercioId)}
+                                                            required
+                                                            placeholder="Comercio"
+                                                            onChange={handleComercioId}
+                                                            options={listComercios}
+                                                        />
+                                                    </Form.Group>
+                                                    <Form.Group as={Col} md="6">
+                                                        <Form.Label htmlFor="sucursalId">Sucursal</Form.Label>
+                                                        <Select
+                                                            id="sucursalId"
+                                                            name="sucursalId"
+                                                            className="basic-single"
+                                                            classNamePrefix="select"
+                                                            defaultValue={listSucursales.find(i => i.value === values.sucursalId)}
+                                                            required
+                                                            placeholder="Sucursal"
+                                                            onChange={handleSucursalId}
+                                                            options={listSucursales}
+                                                        />
+                                                    </Form.Group>
+                                                </Form.Row>
+                                                <div className="row">
+                                                    <Form.Group as={Col} md="3">
+                                                        <Form.Label htmlFor="estado_quejaId">Estado de Queja</Form.Label>
+                                                        <SelectGroup
+                                                            name="estado_quejaId"
+                                                            id="estado_quejaId"
+                                                            required
+                                                            onChange={handleOnChange}
+                                                            value={values.estado_quejaId}
+                                                        >
+                                                            <option value="0">TODOS LOS ESTADOS</option>
+                                                            <option value="1">ENVIADA</option>
+                                                            <option value="5">FINALIZADA</option>
+                                                        </SelectGroup>
+                                                    </Form.Group>
+
+                                                    <div className="col-md-3">
+                                                        <div className="form-group col">
+                                                            <label className="form-label">Fecha Inicial</label>
+                                                            <input
+                                                                type="date"
+                                                                id="fechaInicial"
+                                                                name="fechaInicial"
+                                                                value={values.fechaInicial}
+                                                                onChange={handleOnChange}
+                                                                className="form-control" />
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-3">
+                                                        <div className="form-group col">
+                                                            <label className="form-label">Fecha Final</label>
+                                                            <input
+                                                                type="date"
+                                                                id="fechaFinal"
+                                                                name="fechaFinal"
+                                                                value={values.fechaFinal}
+                                                                onChange={handleOnChange}
+                                                                className="form-control" />
+                                                        </div>
+                                                    </div>
+                                                    <div className="col-md-3">
+                                                        <div className="form-group col">
+                                                            <label className="form-label">&nbsp;&nbsp;</label>
+                                                            <div className="mb-3 input-group">
+                                                                <div className="input-group-append">
+                                                                    <button className="btn btn-primary" type="submit">Filtrar<i className="feather icon-search" /></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
                                                 </div>
-                                                <p>Observaciones de la queja que se realizo</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                                            </ValidationForm>
+                                        }
+                                    </Card.Body>
+                                </Card>
+                                {
+                                    listQuejas.length > 0 ?
+                                        <>
+                                            <h4>{origenQuejas} ({totalItems})</h4>
+                                            <hr />
+                                        </>
+                                        : <>
+                                            <h4>{origenQuejas} (0)</h4>
+                                            <hr />
+                                        </>
+                                }
+                                <InfiniteScroll
+                                    dataLength={listQuejas.length}
+                                    next={GetQuejas}
+                                    hasMore={true}
+                                    loader={numPaginaActual <= numPagMax && <Loading />}
+                                >
+                                    {
+
+                                        listQuejas.map((item, index) => {
+                                            let clase = "open-tic";
+                                            if (item.estado_quejaId === 5) {
+                                                clase = "close-tic";
+                                            }
+                                            return (
+                                                <div className={`ticket-block ${clase}`} key={`itemqueja__${index}`}>
+                                                    <Row className="row">
+                                                        <div className="col">
+                                                            <div className="card hd-body" onClick={() => handleItemInfo(item)}>
+                                                                <div className="row align-items-center">
+                                                                    <div className="col border-right pr-0">
+                                                                        <div className="card-body inner-center">
+                                                                            <div className="ticket-customer font-weight-bold">[{item.quejaId}] - Anónimo {
+                                                                                item.estado_quejaId === 5 && <strong> - (PROCESO FINALIZADO)</strong>
+                                                                            }</div>
+                                                                            <ul className="list-inline mt-2 mb-0">
+                                                                                <li>Departamento {item.departamento} - Municipio {item.municipio}</li>
+                                                                                <li className="list-inline-item"><i className="feather icon-home mr-1 f-14" />{item.razon_social} ({item.sucursal})</li>
+                                                                                <li className="list-inline-item"><i className="feather icon-calendar mr-1 f-14" />Ingreso: {item.fecha_crea}</li>
+                                                                            </ul>
+                                                                            <div className="excerpt mt-4">
+                                                                                <h6>Queja</h6>
+                                                                                <p>{item.descripcion}</p>
+                                                                            </div>
+                                                                            <div className="mt-2">
+                                                                                <div className="mr-3 text-muted" style={{ cursor: 'pointer' }}><i className="feather icon-eye mr-1" />Ver Detalles</div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div className="col-auto pl-0 right-icon">
+                                                                        <div className="card-body">
+                                                                            <ul className="list-unstyled mb-0">
+                                                                                <li style={{ cursor: 'pointer' }}><div data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top"><i className="feather icon-circle text-muted" /></div></li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </Row>
+                                                </div>
+                                            )
+                                        })
+
+
+                                    }
+                                </InfiniteScroll>
+                            </Col>
                         </Row>
-                    </div>
 
+                        <div className={state.isOpen ? queViewActive : queView}>
+                            <div className="overlay" onClick={() => setstate({ isOpen: false })} />
+                            <div className="content">
+                                {
+                                    loadingInfo === true ? <Loading />
+                                        : <Col sm={12}>
+                                            <Card className='border-0 shadow-none'>
+                                                <Card.Body className='pr-0 pl-0 pt-0'>
+                                                    <Row>
+                                                        <Col>
+                                                            <div className="tab-block border-bottom mb-4 pb-3">
+                                                                <h5><i className="feather icon-corner-up-left mr-1" />Responder queja</h5>
+                                                            </div>
+                                                            <Col>
+                                                                <h6 className="mb-0">[{infoItem.quejaId}] - Anónimo
+                                                                    {
+                                                                        resultQueja.estado_quejaId === 5 &&
+                                                                        <strong> - (PROCESO FINALIZADO POR [{resultQueja?.Usuario?.user_name}])</strong>
+                                                                    }
+                                                                </h6>
+                                                                <hr />
+                                                                <h6 className="mb-1">Departamento: {infoItem.departamento} - {infoItem.razon_social}</h6>
+                                                                <h6 className="mb-1">Municipio:{infoItem.municipio} - {infoItem.sucursal}</h6>
+                                                                <label className="text-muted">Ingreso:{infoItem.fecha_crea}</label>
+                                                            </Col>
+                                                            <Col sm={12} className='mt-3'>
+                                                                {
+                                                                    adjuntosQueja.length > 0 ?
+                                                                        <div className="comment-content">
+                                                                            <h6 className="mb-1">Queja: {infoItem.descripcion}</h6>
+                                                                            <hr />
+                                                                            <h6 className="mb-5">Solicita: {infoItem.solicitud}</h6>
+                                                                            <p><strong>Imagenes adjuntas</strong></p>
+                                                                            <hr />
+                                                                            <Gallery images={adjuntosQueja || []} backdropClosesModal />
+                                                                        </div>
+                                                                        : <div className="comment-content">
+                                                                            <h6 className="mb-1">Queja: {infoItem.descripcion}</h6>
+                                                                        </div>
+                                                                }
+                                                            </Col>
+                                                        </Col>
+                                                    </Row>
+                                                </Card.Body>
 
+                                                <Row className="border-bottom border-top pb-3 pt-4 pl-3 pr-3">
 
+                                                    <div className="form-group col-md-12">
+                                                        <label className="form-label" htmlFor="solucion">Solucion a queja</label>
+                                                        <textarea
+                                                            className="form-control"
+                                                            name="solucion"
+                                                            id="solucion"
+                                                            placeholder="Se debe de describir la solución a dicha queja"
+                                                            autoComplete="off"
+                                                            rows="6"
+                                                            minLength="50"
+                                                            value={resultQueja.solucion ?? ""}
+                                                            onChange={handleChangeRespues}
+                                                            readOnly={(resultQueja.estado_quejaId === 5 || !editQueja) && true}
+                                                        >
+                                                        </textarea>
+                                                    </div>
 
-                    
-                  
+                                                    <div className="form-group col-md-12">
+                                                        <label className="form-label" htmlFor="observaciones">Observaciones</label>
+                                                        <textarea
+                                                            className="form-control"
+                                                            name="observaciones"
+                                                            id="observaciones"
+                                                            placeholder="Observaciones"
+                                                            autoComplete="off"
+                                                            rows="3"
+                                                            value={resultQueja.observaciones ?? ""}
+                                                            onChange={handleChangeRespues}
+                                                            readOnly={(resultQueja.estado_quejaId === 5 || !editQueja) && true}
+                                                        >
+                                                        </textarea>
+                                                    </div>
 
-
-                  
-               </Col>
-                <Col xl={4} lg={12}>
-                    <div className="right-side">
-                        <Card className="mb-3">
-                            <Card.Header className="card-header">
-                                <h5>Total de Quejas</h5>
-                            </Card.Header>
-                            <Card.Body className="p-3">
-                                <div className="cat-list">
-                                    <div className="border-bottom pb-3 ">
-                                        <div className="d-inline-block">
-                                            <img src={p1} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                            <a href={DEMO.BLANK_LINK}>Piaf able</a>
-                                        </div>
-                                        <div className="float-right span-content">
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-danger rounded-circle mr-1" data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">1</a>
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-secondary rounded-circle mr-0 " data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">3</a>
-                                        </div>
-                                    </div>
-                                    <div className="border-bottom pb-3 pt-3">
-                                        <div className="d-inline-block">
-                                            <img src={p2} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                            <a href={DEMO.BLANK_LINK}>Pro able</a>
-                                        </div>
-                                        <div className="float-right span-content">
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-secondary rounded-circle mr-0 " data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">3</a>
-                                        </div>
-                                    </div>
-                                    <div className="border-bottom pb-3 pt-3">
-                                        <div className="d-inline-block">
-                                            <img src={p3} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                            <a href={DEMO.BLANK_LINK}>CRM admin</a>
-                                        </div>
-                                        <div className="float-right span-content">
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-danger rounded-circle mr-1" data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">1</a>
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-secondary rounded-circle mr-0 " data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">3</a>
-                                        </div>
-                                    </div>
-                                    <div className="border-bottom pb-3 pt-3">
-                                        <div className="d-inline-block">
-                                            <img src={p4} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                            <a href={DEMO.BLANK_LINK}>Alpha pro</a>
-                                        </div>
-                                        <div className="float-right span-content">
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-secondary rounded-circle mr-0 " data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">3</a>
-                                        </div>
-                                    </div>
-                                    <div className="pt-3">
-                                        <div className="d-inline-block">
-                                            <img src={p5} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                            <a href={DEMO.BLANK_LINK}>Carbon able</a>
-                                        </div>
-                                        <div className="float-right span-content">
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-secondary rounded-circle mr-0 " data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">3</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                        <Card>
-                            <Card.Header className="pt-4 pb-4">
-                                <h5>Quejas por departamento</h5>
-                            </Card.Header>
-                            <Card.Body className="p-3">
-                                <div className="cat-list">
-                                    <div className="border-bottom pb-3 ">
-                                        <div className="d-inline-block">
-                                            <img src={avatar5} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                            <a href={DEMO.BLANK_LINK}>Tom Cook</a>
-                                        </div>
-                                        <div className="float-right span-content">
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-danger rounded-circle mr-1" data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">1</a>
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-secondary rounded-circle mr-0 " data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">3</a>
-                                        </div>
-                                    </div>
-                                    <div className="border-bottom pb-3 pt-3">
-                                        <div className="d-inline-block">
-                                            <img src={avatar4} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                            <a href={DEMO.BLANK_LINK}>Brad Larry</a>
-                                        </div>
-                                        <div className="float-right span-content">
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-danger rounded-circle mr-1" data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">1</a>
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-secondary rounded-circle mr-0 " data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">3</a>
-                                        </div>
-                                    </div>
-                                    <div className="border-bottom pb-3 pt-3">
-                                        <div className="d-inline-block">
-                                            <img src={avatar3} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                            <a href={DEMO.BLANK_LINK}>Jhon White</a>
-                                        </div>
-                                        <div className="float-right span-content">
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-secondary rounded-circle mr-0 " data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">3</a>
-                                        </div>
-                                    </div>
-                                    <div className="border-bottom pb-3 pt-3">
-                                        <div className="d-inline-block">
-                                            <img src={avatar2} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                            <a href={DEMO.BLANK_LINK}>Mark Jobs</a>
-                                        </div>
-                                        <div className="float-right span-content">
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-secondary rounded-circle mr-0 " data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">3</a>
-                                        </div>
-                                    </div>
-                                    <div className="pt-3">
-                                        <div className="d-inline-block">
-                                            <img src={avatar1} alt="" className="wid-20 rounded mr-1 img-fluid" />
-                                            <a href={DEMO.BLANK_LINK}>Able Pro</a>
-                                        </div>
-                                        <div className="float-right span-content">
-                                            <a href={DEMO.BLANK_LINK} className="btn waves-effect waves-light btn-default badge-secondary rounded-circle mr-0 " data-toggle="tooltip" data-placement="top" title="" data-original-title="tooltip on top">3</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </Card.Body>
-                        </Card>
-                    </div>
-                </Col>
-            </Row>
-
-
-
-            <div className={state.isOpen ? queViewActive : queView}>
-                <div className="overlay" onClick={() => setstate({ isOpen: false })} />
-                <div className="content">
-                    <Card.Body>
-                        <h4>Dar solución a queja<span className="badge badge-danger text-uppercase ml-2 f-12">Private</span></h4>
-                        <div className="border-bottom pb-3 pt-3">
-                            <div className="row">
-                                <div className="col-md-7">
-                                    <button type="button" className="btn waves-effect waves-light btn-outline-success btn-sm mr-1"><i className="feather icon-check mr-1" /> Closed</button>
-                                    <p className="list-inline-item mb-0"><img src={p1} alt="" className="wid-20 rounded mr-1 img-fluid" />Alpha pro</p>
-                                </div>
-                                <div className="col-md-5 text-right">
-                                    <p className="d-inline-block mb-0"><i className="feather icon-calendar mr-1" /><label className="mb-0">Jan,1st,2019</label></p>
-                                </div>
+                                                    <button type="button" className="btn btn-warning mr-1" onClick={() => setstate({ isOpen: false })} > Cancelar</button>
+                                                    {
+                                                        resultQueja.estado_quejaId !== 5 && editQueja === true &&
+                                                        <button type="button" className="btn btn-success" onClick={() => { UpdateQueja(); }}>Responder</button>
+                                                    }
+                                                </Row>
+                                            </Card>
+                                        </Col>
+                                }
                             </div>
                         </div>
-                    </Card.Body>
-
-                    <Col sm={12}>
-                        <Card className='border-0 shadow-none'>
-                            <Card.Body className='pr-0 pl-0 pt-0'>
-                                <Row>
-                                    <Col sm='auto'>
-                                        <img className="media-object wid-60 img-radius" src={avatar5} alt="Generic placeholder" />
-                                    </Col>
-                                    <Col>
-                                        <div className="tab-block border-bottom mb-4 pb-3">
-                                            <h5><i className="feather icon-corner-up-left mr-1" />Reply</h5>
-                                        </div>
-                                        <p className="text-danger"><span className="font-weight-bold mr-1">Note!</span>This ticket is closed. If you want to re-open it, just post a reply below.</p>
-                                        <JoditEditor
-                                            editorRef={ref}
-                                            value={state.content}
-                                            config={config}
-                                            onChange={updateContent}
-                                        />
-                                        <div className="btn-block mt-3">
-                                            <Dropdown className="btn-group mb-2 mr-2">
-                                                <button type="button" className="btn waves-effect waves-light btn-primary">Primary</button>
-                                                <Dropdown.Toggle className="btn waves-effect waves-light btn-primary dropdown-toggle dropdown-toggle-split">
-                                                    <span className="sr-only">Toggle Dropdown</span>
-                                                </Dropdown.Toggle>
-                                                <Dropdown.Menu className="dropdown-menu">
-                                                    <a className="dropdown-item" href={DEMO.BLANK_LINK}>Action</a>
-                                                    <a className="dropdown-item" href={DEMO.BLANK_LINK}>Another action</a>
-                                                    <a className="dropdown-item" href={DEMO.BLANK_LINK}>Something else here</a>
-                                                    <div className="dropdown-divider" />
-                                                    <a className="dropdown-item" href={DEMO.BLANK_LINK}>Separated link</a>
-                                                </Dropdown.Menu>
-                                            </Dropdown>
-                                            <div className="file btn waves-effect waves-light btn-outline-secondary file-btn mb-2 mr-2">
-                                                <i className="feather icon-paperclip" />Add Atachment
-                                                <input type="file" name="file" />
-                                            </div>
-                                        </div>
-                                    </Col>
-                                </Row>
-                            </Card.Body>
-                            <Row className="border-bottom border-top pb-3 pt-4 pl-3 pr-3">
-                                <Col sm='auto'>
-                                    <img className="media-object wid-60 img-radius" src={avatar5} alt="Generic placeholder" />
-                                </Col>
-                                <Col>
-                                    <h6 className="mb-0">Support Agent name<span className="badge badge-secondary ml-2">Support Agent</span></h6>
-                                    <label className="text-muted">5 Month ago</label>
-                                </Col>
-                                <Col sm='auto'>
-                                    <ul className="list-unstyled mb-0">
-                                        <li className="d-inline-block mr-1"><a href={DEMO.BLANK_LINK}><i className="feather icon-edit text-muted" /></a></li>
-                                        <li className="d-inline-block"><a href={DEMO.BLANK_LINK}><i className="feather icon-trash-2 text-muted" /></a></li>
-                                    </ul>
-                                </Col>
-                                <Col sm={12} className='mt-3'>
-                                    <div className="comment-content">
-                                        <p>hello Anónimo,</p>
-                                        <p>you need to create <strong>"toolbar-options" div only once</strong> in a page in your code, this div fill found
-                                            <strong>every "td"</strong> tag in your page, just remove those things.
-                                        </p>
-                                        <p>and also</p>
-                                        <p>in option button add "<strong>p-0</strong>" class in "<strong>I</strong>" tag</p>
-                                        <p>to</p>
-                                        <p />
-                                        <p>Thanks...</p>
-                                        <Prism code={basicCode} language="json" />
-                                    </div>
-                                </Col>
-                            </Row>
-                            <Row className="border-bottom border-top pb-3 pt-4 pl-3 pr-3">
-                                <Col sm='auto'>
-                                    <img className="media-object wid-60 img-radius" src={avatar4} alt="Generic placeholder" />
-                                </Col>
-                                <Col>
-                                    <h6 className="mb-0">Support Agent name<span className="badge badge-secondary ml-2">Support Agent</span></h6>
-                                    <label className="text-muted">5 Month ago</label>
-                                </Col>
-                                <Col sm='auto'>
-                                    <ul className="list-unstyled mb-0">
-                                        <li className="d-inline-block mr-1"><a href={DEMO.BLANK_LINK}><i className="feather icon-edit text-muted" /></a></li>
-                                        <li className="d-inline-block"><a href={DEMO.BLANK_LINK}><i className="feather icon-trash-2 text-muted" /></a></li>
-                                    </ul>
-                                </Col>
-                                <Col sm={12} className='mt-3'>
-                                    <div className="comment-content">
-                                        <p>hello Anónimo,</p>
-                                        <p>you need to create <strong>"toolbar-options" div only once</strong> in a page in your code, this div fill found
-                                            <strong>every "td"</strong> tag in your page, just remove those things.
-                                        </p>
-                                        <p>and also</p>
-                                        <p>in option button add "<strong>p-0</strong>" class in "<strong>I</strong>" tag</p>
-                                        <p>to</p>
-                                        <p />
-                                        <p>Thanks...</p>
-                                        <Gallery images={[
-                                            { src: image1, thumbnail: thumb1, caption: "Gallery Image 1", useForDemo: true },
-                                            { src: image2, thumbnail: thumb2, caption: "Gallery Image 2", useForDemo: true },
-                                            { src: image3, thumbnail: thumb3, caption: "Gallery Image 3", useForDemo: true },
-                                            { src: image4, thumbnail: thumb4, caption: "Gallery Image 4", useForDemo: true },
-                                            { src: image5, thumbnail: thumb5, caption: "Gallery Image 5", useForDemo: true },
-                                            { src: image6, thumbnail: thumb6, caption: "Gallery Image 6", useForDemo: true }
-                                        ]} backdropClosesModal />
-                                    </div>
-                                </Col>
-                            </Row>
-                            <Row className="border-bottom border-top pb-3 pt-4 pl-3 pr-3">
-                                <Col sm='auto'>
-                                    <img className="media-object wid-60 img-radius" src={avatar3} alt="Generic placeholder" />
-                                </Col>
-                                <Col>
-                                    <h6 className="mb-0">Support Agent name<span className="badge badge-secondary ml-2">Support Agent</span></h6>
-                                    <label className="text-muted">5 Month ago</label>
-                                </Col>
-                                <Col sm='auto'>
-                                    <ul className="list-unstyled mb-0">
-                                        <li className="d-inline-block mr-1"><a href={DEMO.BLANK_LINK}><i className="feather icon-edit text-muted" /></a></li>
-                                        <li className="d-inline-block"><a href={DEMO.BLANK_LINK}><i className="feather icon-trash-2 text-muted" /></a></li>
-                                    </ul>
-                                </Col>
-                                <Col sm={12} className='mt-3'>
-                                    <div className="comment-content">
-                                        <p>hello Anónimo,</p>
-                                        <p>you need to create <strong>"toolbar-options" div only once</strong> in a page in your code, this div fill found
-                                            <strong>every "td"</strong> tag in your page, just remove those things.
-                                        </p>
-                                        <p>and also</p>
-                                        <p>in option button add "<strong>p-0</strong>" class in "<strong>I</strong>" tag</p>
-                                        <p>to</p>
-                                        <p />
-                                        <p>Thanks...</p>
-                                        <Prism code={basicCode} language="html" />
-                                    </div>
-                                </Col>
-                            </Row>
-                        </Card>
-                    </Col>
-                </div>
-            </div>
+                    </>
+                    : <NoAutorizado />
+            }
         </Aux>
 
     )
 }
+

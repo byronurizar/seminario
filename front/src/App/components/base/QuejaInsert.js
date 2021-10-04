@@ -45,7 +45,7 @@ export const QuejaInsert = ({ history }) => {
     };
     var eventHandlers = { addedfiles: (files) => setFile(files) }
 
-    console.log({file});
+    
     const [loading, setLoading] = useState(false)
     const handleOnSubmit = async (e) => {
         e.preventDefault();
