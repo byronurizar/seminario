@@ -1,6 +1,6 @@
 module.exports = {
   api: {
-    port: process.env.API_PORT || 3100,
+    port: process.env.API_PORT || 3700,
     bitacora_cambios: process.env.BITACORA_CAMBIOS || true,
     bitacoraPeticion: process.env.BITACORA_PETICION || true,
     bitacoraError: process.env.BITACORA_ERROR || true,
