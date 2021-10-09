@@ -3,9 +3,8 @@ module.exports = (sequelize, type) => {
         "reset_password",
         {
             codigo: {
-                type: type.INTEGER,
+                type: type.STRING(300),
                 primaryKey: true,
-                autoIncrement: true,
             },
             messageId: {
                 type: type.STRING(300)
@@ -27,7 +26,7 @@ module.exports = (sequelize, type) => {
             usuarioId: {
                 type: type.INTEGER
             },
-            fecha_crea: {
+            usuario_crea: {
                 type: type.DATE,
                 allowNull: false,
                 defaultValue: type.NOW
@@ -35,6 +34,16 @@ module.exports = (sequelize, type) => {
             fecha_vencimiento: {
                 type: type.DATE,
                 allowNull: false
+            },
+            ipSolicitud: {
+                type: type.STRING(100)
+            },
+            fecha_update: {
+                type: type.DATE,
+                allowNull: true
+            },
+            ipUpdate: {
+                type: type.STRING(100)
             },
             estadoId: {
                 type: type.INTEGER,

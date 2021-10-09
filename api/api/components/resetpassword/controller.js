@@ -1,5 +1,6 @@
 const moment = require('moment');
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt');
+const { v4 } = require("uuid");
 const Correo = require('../../../utils/EnviarCorreo');
 const { ResetPassWord, Parametro, Persona, Usuario } = require('../../../store/db');
 let { htmlResetPassword } = require('../../../utils/plantillasCorreo/ResetPassword');
@@ -48,6 +49,7 @@ const enviarCorreo = async (req) => {
     let response = {};
     const { email } = req.body;
     const persona = await Persona.findOne({ where: { email }, attributes: ['personaId'] });
+    let ipCliente = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     const { personaId } = !!persona && persona;
     if (personaId > 0) {
         const usuario = await Usuario.findOne({ where: { personaId }, attributes: ['usuarioId', 'user_name'] });
@@ -73,9 +75,12 @@ const enviarCorreo = async (req) => {
                 const infoCorreo = await getInfoCorreo();
                 const { minutosVigenciaEnlace = 10 } = !!configuracion && configuracion;
                 const { nombreEmpresa = "NO CONFIGURADO", direccionEmpresa = "NO CONFIGURADO", urlLogoEmpresa = "#", urlWebResetPassWord = "#" } = !!infoCorreo && infoCorreo;
+                let uuidReset = v4();
                 const infoReset = {
-                    emisor: configuracion.user,
-                    receptor: email
+                    codigo: uuidReset,
+                    emisor:configuracion.user,
+                    receptor: email,
+                    ipSolicitud: ipCliente
                 };
                 infoReset.usuarioId = usuarioId;
                 infoReset.fecha_vencimiento = moment(new Date(), 'YYYY/MM/DD HH:mm').add(minutosVigenciaEnlace, "minutes");
@@ -91,9 +96,7 @@ const enviarCorreo = async (req) => {
                 htmlAux = htmlAux.replace("[footer]", "Recibió este correo electrónico porque recibimos una solicitud de <b>Restablecer Contraseña</b> para su cuenta. Si no solicitó <b>Restablecer Contraseña</b>, puede eliminar este correo de forma segura.");
                 htmlAux = htmlAux.replace("[nombreEmpresa]", nombreEmpresa);
                 htmlAux = htmlAux.replace("[direccionEmpresa]", direccionEmpresa);
-                let params = `${codigo}|${usuarioId}`;
-                params = Buffer.from(params).toString("base64");
-                let hrefBoton = `${urlWebResetPassWord}${params}`;
+                let hrefBoton = `${urlWebResetPassWord}${codigo}`;
                 htmlAux = htmlAux.replace("[hrefBoton]", hrefBoton);
                 const resultEmail = await Correo.sendMail(configuracion, email, "Restablecer Contraseña", null, htmlAux);
                 let messageId = resultEmail.messageId;
@@ -121,61 +124,53 @@ const enviarCorreo = async (req) => {
 }
 
 const updatePass = async (req) => {
+    let ipCliente = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     let response = {};
     const { id, password = "" } = req.body;
     if (String(password).trim().length > 0) {
         if (id) {
-            let parametros = Buffer.from(id, 'base64').toString().split('|');
-            if (parametros.length === 2) {
-                let codigo = parametros[0];
-                let usuarioId = parametros[1];
-
-                let infoResetPass = await ResetPassWord.findOne({
-                    where: { codigo, usuarioId },
-                    attributes: ['codigo', 'messageId', 'fecha_vencimiento', 'estadoId'],
-                    order: [
-                        ['codigo', 'DESC']
-                    ]
-                });
-                if (infoResetPass) {
-                    const { fecha_vencimiento, estadoId } = infoResetPass;
-                    if (estadoId === 1) {
-                        let minutosParaVencer = moment.duration(moment(fecha_vencimiento).diff(moment(new Date()))).asMinutes();
-                        if (minutosParaVencer > 0) {
-                            let encript_pass = bcrypt.hashSync(password, 10);
-                            const resultadoUpdateUser = await Usuario.update({ password: encript_pass }, {
+            let uuidReset = String(id).trim();
+            let infoResetPass = await ResetPassWord.findOne({
+                where: { codigo: uuidReset },
+                attributes: ['codigo', 'usuarioId', 'messageId', 'fecha_vencimiento', 'estadoId'],
+                order: [
+                    ['codigo', 'DESC']
+                ]
+            });
+            if (infoResetPass) {
+                const { fecha_vencimiento, estadoId, usuarioId } = infoResetPass;
+                if (estadoId === 1) {
+                    let minutosParaVencer = moment.duration(moment(fecha_vencimiento).diff(moment(new Date()))).asMinutes();
+                    if (minutosParaVencer > 0) {
+                        let encript_pass = bcrypt.hashSync(password, 10);
+                        const resultadoUpdateUser = await Usuario.update({ password: encript_pass }, {
+                            where: {
+                                usuarioId
+                            }
+                        });
+                        if (resultadoUpdateUser > 0) {
+                            const resultadoUpdateResetPass = await ResetPassWord.update({ ipUpdate: ipCliente, fecha_update: new Date(), estadoId: 2  }, {
                                 where: {
-                                    usuarioId
+                                    codigo: uuidReset
                                 }
                             });
-                            if (resultadoUpdateUser > 0) {
-                                const resultadoUpdateResetPass = await ResetPassWord.update({ estadoId: 2 }, {
-                                    where: {
-                                        codigo
-                                    }
-                                });
-                                response.code = 1;
-                                response.data = "Contraseña actualizada exitosamente.";
-                            } else {
-                                response.code = -1;
-                                response.data = "Ocurrió un error al intentar actualizar la contraseña, por favor comuniquese con el administrador de la aplicación.";
-                            }
+                            response.code = 1;
+                            response.data = "Contraseña actualizada exitosamente.";
                         } else {
                             response.code = -1;
-                            response.data = "La solicitud para restablecer contraseña ya venció.";
+                            response.data = "Ocurrió un error al intentar actualizar la contraseña, por favor comuniquese con el administrador de la aplicación.";
                         }
                     } else {
                         response.code = -1;
-                        response.data = "La solicitud para restablecer contraseña ya fue utilizada.";
+                        response.data = "La solicitud para restablecer contraseña ya venció.";
                     }
                 } else {
                     response.code = -1;
-                    response.data = "No existe solicitud para restablecer contraseña.";
+                    response.data = "La solicitud para restablecer contraseña ya fue utilizada.";
                 }
-
             } else {
                 response.code = -1;
-                response.data = "Los parametros enviados son corruptos.";
+                response.data = "No existe solicitud para restablecer contraseña.";
             }
         } else {
             response.code = -1;
